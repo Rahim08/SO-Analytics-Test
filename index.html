@@ -12,100 +12,137 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
-html{
-  font-size:16px;
-  height:100%;
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-}
+html{font-size:16px;height:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
-  height:100%;background:#f2f2f7;
+  height:100%;
   font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',sans-serif;
   overflow:hidden;
+  background:#e8eef5;
 }
-:root{
-  --bg:#f2f2f7;--surface:#fff;
-  --s2:rgba(118,118,128,.12);--s3:rgba(118,118,128,.07);
-  --border:rgba(60,60,67,.13);--b2:rgba(60,60,67,.07);
-  --text:#1c1c1e;--t2:#3a3a3c;--t3:#6d6d72;--t4:#aeaeb2;
-  --blue:#007aff;--bl:rgba(0,122,255,.1);
-  --green:#34c759;--red:#ff3b30;--orange:#ff9500;--purple:#af52de;
-  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);
-  --hh:56px;--th:50px;--bnh:80px;--bbh:64px;
+/* Живой фон — градиент как в iOS 26 */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(120,180,255,0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 5%,  rgba(180,140,255,0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 50% 95%, rgba(100,210,200,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 80%, rgba(255,160,100,0.25) 0%, transparent 50%),
+    linear-gradient(160deg, #c8dff5 0%, #d5e8f0 30%, #e0eee8 60%, #dde8f5 100%);
+  animation: bgshift 18s ease-in-out infinite alternate;
+}
+@keyframes bgshift{
+  0%  {filter:hue-rotate(0deg) brightness(1)}
+  50% {filter:hue-rotate(12deg) brightness(1.04)}
+  100%{filter:hue-rotate(-8deg) brightness(.97)}
 }
 
-/* HEADER */
+:root{
+  --bg:transparent;
+  --surface:rgba(255,255,255,0.55);
+  --surface2:rgba(255,255,255,0.35);
+  --s2:rgba(118,118,128,.10);--s3:rgba(118,118,128,.06);
+  --border:rgba(255,255,255,0.6);--b2:rgba(60,60,67,.08);
+  --glass-border:rgba(255,255,255,0.7);
+  --text:#1c1c1e;--t2:#3a3a3c;--t3:#6d6d72;--t4:#aeaeb2;
+  --blue:#007aff;--bl:rgba(0,122,255,.12);
+  --green:#34c759;--red:#ff3b30;--orange:#ff9500;--purple:#af52de;
+  --sh:0 2px 8px rgba(0,0,0,.07), 0 8px 32px rgba(0,0,0,.06);
+  --sh-glass:0 4px 24px rgba(0,0,0,.10), 0 1px 0 rgba(255,255,255,.8) inset;
+  --hh:56px;--th:50px;--bnh:82px;--bbh:64px;
+  --blur:saturate(200%) blur(28px);
+}
+
+/* ── HEADER ── */
 .header{
   position:fixed;top:0;left:0;right:0;z-index:300;
   height:var(--hh);
-  background:rgba(242,242,247,.95);
-  backdrop-filter:saturate(180%) blur(20px);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);
-  border-bottom:1px solid var(--border);
+  background:rgba(235,242,252,0.72);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-bottom:1px solid var(--glass-border);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 16px;
+  box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 2px 12px rgba(0,0,0,.06);
 }
 .logo{font-size:18px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
-.logo img{height:32px;width:32px;object-fit:contain;border-radius:8px}
+.logo img{height:32px;width:32px;object-fit:contain;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .month-pill{
   display:flex;align-items:center;gap:5px;
-  background:var(--bl);border-radius:20px;
-  padding:7px 14px;cursor:pointer;
+  background:rgba(0,122,255,0.14);
+  border:1px solid rgba(0,122,255,0.25);
+  border-radius:20px;padding:7px 14px;cursor:pointer;
   font-size:15px;font-weight:600;color:var(--blue);
-  border:none;font-family:inherit;
+  font-family:inherit;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:all .15s;
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset;
 }
-.month-pill:active{opacity:.6}
+.month-pill:active{opacity:.6;transform:scale(.96)}
 .chevron{display:inline-block;width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-3px}
 
-/* TOP TABS - desktop only */
+/* ── TOP TABS desktop ── */
 .top-tabs{display:none}
 
-/* SCROLL */
+/* ── SCROLL ── */
 .scroll{
-  position:fixed;
-  top:var(--hh);left:0;right:0;
+  position:fixed;top:var(--hh);left:0;right:0;
   bottom:calc(var(--bnh) + var(--bbh));
   overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  z-index:1;
 }
 .scroll::-webkit-scrollbar{display:none}
 .scroll.no-daybar{bottom:var(--bnh)}
-.panel{display:none;padding:16px 16px 8px;animation:up .22s ease}
+.panel{display:none;padding:16px 16px 8px;animation:up .28s cubic-bezier(.16,1,.3,1)}
 .panel.active{display:block}
-@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* BOTTOM NAV */
+/* ── BOTTOM NAV — Liquid Glass ── */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:300;
   height:var(--bnh);
-  background:rgba(248,248,252,.97);
-  backdrop-filter:saturate(180%) blur(20px);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);
-  border-top:1px solid var(--border);
+  background:rgba(230,240,252,0.70);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-top:1px solid var(--glass-border);
   display:flex;align-items:flex-start;
   padding-top:10px;
   padding-bottom:env(safe-area-inset-bottom,10px);
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 -2px 16px rgba(0,0,0,.05);
 }
 .bnav-tab{
   flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
   cursor:pointer;color:var(--t4);
-  font-size:11px;font-weight:600;letter-spacing:.3px;
+  font-size:10.5px;font-weight:600;letter-spacing:.2px;
   border:none;background:none;font-family:inherit;padding:0;
-  transition:all .18s;
+  transition:all .2s cubic-bezier(.16,1,.3,1);
+  position:relative;
 }
-.bnav-tab svg{width:26px;height:26px;transition:all .18s}
+.bnav-tab svg{width:26px;height:26px;transition:all .2s cubic-bezier(.16,1,.3,1)}
 .bnav-tab.active{color:var(--blue)}
-.bnav-tab.active svg{transform:scale(1.1)}
+.bnav-tab.active svg{transform:scale(1.12)}
+/* Liquid glass pill on active tab */
+.bnav-tab.active::before{
+  content:'';
+  position:absolute;top:-6px;
+  width:52px;height:38px;
+  background:rgba(0,122,255,0.13);
+  border-radius:14px;
+  border:1px solid rgba(0,122,255,0.22);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset;
+  z-index:-1;
+  animation:pillpop .25s cubic-bezier(.16,1,.3,1);
+}
+@keyframes pillpop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
 
-/* DAY BAR */
+/* ── DAY BAR ── */
 .day-bar{
   position:fixed;left:0;right:0;z-index:299;
   height:var(--bbh);
-  background:rgba(255,255,255,.97);
-  backdrop-filter:saturate(180%) blur(20px);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);
-  border-top:1px solid var(--border);
-  display:flex;align-items:center;padding:0 20px;gap:12px;
+  background:rgba(240,246,255,0.72);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-top:1px solid var(--glass-border);
+  display:flex;align-items:center;padding:0 16px;gap:10px;
   bottom:var(--bnh);
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset;
 }
 .nav-btn{
   width:44px;height:44px;border-radius:50%;
@@ -119,61 +156,76 @@ body{
 .day-main{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.3px}
 .day-sub{font-size:12px;color:var(--blue);margin-top:2px;font-weight:500}
 
-/* CARDS */
-.card{background:var(--surface);border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
+/* ── CARDS — Liquid Glass ── */
+.card{
+  background:var(--surface);
+  border-radius:20px;overflow:hidden;margin-bottom:12px;
+  box-shadow:var(--sh-glass);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
 .sec{font-size:13px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:18px 4px 8px}
 .sec:first-child{padding-top:2px}
 
-/* STATS */
+/* ── STATS ── */
 .sg{display:grid;gap:10px;margin-bottom:12px}
 .c2{grid-template-columns:1fr 1fr}
 .c4{grid-template-columns:repeat(4,1fr)}
-.stat{background:var(--surface);border-radius:14px;padding:16px 14px;box-shadow:var(--sh)}
+.stat{
+  background:var(--surface);
+  border-radius:18px;padding:16px 14px;
+  box-shadow:var(--sh-glass);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
 .stat-l{font-size:11px;color:var(--t3);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stat-v{font-size:22px;font-weight:700;letter-spacing:-.5px;line-height:1}
-/* 4-column stats: smaller to fit */
 .c4 .stat{padding:14px 10px}
 .c4 .stat-v{font-size:17px;letter-spacing:-.4px}
 .c4 .stat-l{font-size:10px;letter-spacing:.3px}
 .stat-s{font-size:11px;color:var(--t4);margin-top:5px}
 .bl{color:var(--blue)}.gr{color:var(--green)}.rd{color:var(--red)}.or{color:var(--orange)}
 
-/* LIST */
+/* ── LIST ── */
 .lrow{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--b2);transition:background .1s}
 .lrow:last-child{border-bottom:none}
-.lrow:active{background:var(--s3)}
+.lrow:active{background:rgba(0,0,0,.03)}
 .lname{font-size:17px;color:var(--text);flex:1;padding-right:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lval{font-size:17px;font-weight:600;letter-spacing:-.3px;white-space:nowrap}
 .lval.rd{color:var(--red)}.lval.gr{color:var(--green)}.lval.bl{color:var(--blue)}.lval.or{color:var(--orange)}
 
-/* TABLE */
-.tbl-h{display:grid;padding:9px 16px;background:var(--s3);border-bottom:1px solid var(--b2);font-size:11px;color:var(--t4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;gap:4px}
+/* ── TABLE ── */
+.tbl-h{display:grid;padding:9px 16px;background:rgba(118,118,128,.06);border-bottom:1px solid var(--b2);font-size:11px;color:var(--t4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;gap:4px}
 .tbl-r{display:grid;padding:13px 16px;border-bottom:1px solid var(--b2);font-size:14px;gap:4px;transition:background .1s}
 .tbl-r:last-child{border-bottom:none}
 .kc{grid-template-columns:70px 1fr 1fr 1fr 1fr}
 .ec{grid-template-columns:60px 1fr 1fr 1fr 1fr}
 
-/* TOTAL */
-.tot-row{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;background:var(--s3);border-top:1px solid var(--b2)}
+/* ── TOTAL ── */
+.tot-row{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;background:rgba(118,118,128,.05);border-top:1px solid var(--b2)}
 .tot-l{font-size:13px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
 .tot-v{font-size:24px;font-weight:700;letter-spacing:-.5px;color:var(--text)}
 
-/* MINI BLOCK */
-.mini{background:var(--surface);border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
+/* ── MINI BLOCK ── */
+.mini{
+  background:var(--surface);border-radius:20px;overflow:hidden;margin-bottom:12px;
+  box-shadow:var(--sh-glass);border:1px solid var(--glass-border);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
 .mini-h{padding:12px 16px;border-bottom:1px solid var(--b2);display:flex;align-items:center;gap:8px}
 .mini-ic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 .mini-t{font-size:15px;font-weight:600;color:var(--text)}
 .mini-g{display:grid;gap:1px;background:var(--b2)}
 .mini-g2{grid-template-columns:1fr 1fr}
 .mini-g3{grid-template-columns:1fr 1fr 1fr}
-.mini-c{background:var(--surface);padding:13px 16px;display:flex;flex-direction:column;gap:4px}
+.mini-c{background:rgba(255,255,255,.6);padding:13px 16px;display:flex;flex-direction:column;gap:4px}
 .mini-l{font-size:12px;color:var(--t3)}
 .mini-v{font-size:18px;font-weight:700;letter-spacing:-.3px}
 
-/* CHART */
+/* ── CHART ── */
 .ch-wrap{padding:12px 16px 16px}
 
-/* PROGRESS */
+/* ── PROGRESS ── */
 .prog-i{padding:11px 18px;border-bottom:1px solid var(--b2)}
 .prog-i:last-child{border-bottom:none}
 .prog-top{display:flex;justify-content:space-between;margin-bottom:7px}
@@ -182,87 +234,109 @@ body{
 .prog-bg{height:5px;background:var(--s2);border-radius:3px;overflow:hidden}
 .prog-f{height:100%;border-radius:3px;transition:width .9s cubic-bezier(.16,1,.3,1)}
 
-/* SALARY */
+/* ── SALARY ── */
 .sal-r{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--b2)}
 .sal-r:last-child{border-bottom:none}
-.sal-av{width:40px;height:40px;border-radius:50%;background:var(--bl);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--blue);margin-right:14px;flex-shrink:0}
+.sal-av{width:40px;height:40px;border-radius:50%;background:rgba(0,122,255,.12);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--blue);margin-right:14px;flex-shrink:0;border:1px solid rgba(0,122,255,.2)}
 .sal-nm{font-size:17px;color:var(--text)}
 .sal-v{font-size:28px;font-weight:700;color:var(--blue);letter-spacing:-.5px}
 .sal-lb{font-size:11px;color:var(--t4);text-align:right}
 
-/* DEBT */
+/* ── DEBT ── */
 .debt-w{text-align:center;padding:70px 28px}
-.debt-ic{width:72px;height:72px;background:rgba(255,149,0,.1);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px}
+.debt-ic{width:72px;height:72px;background:rgba(255,149,0,.12);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px;border:1px solid rgba(255,149,0,.2);box-shadow:0 4px 16px rgba(255,149,0,.1)}
 .debt-t{font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px}
 .debt-tx{font-size:16px;color:var(--t3);line-height:1.6}
-.badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,149,0,.1);color:var(--orange);font-size:13px;font-weight:700;border-radius:20px;padding:6px 14px;margin-top:14px}
+.badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,149,0,.1);color:var(--orange);font-size:13px;font-weight:700;border-radius:20px;padding:6px 14px;margin-top:14px;border:1px solid rgba(255,149,0,.2)}
 
-/* LOADING */
+/* ── LOADING ── */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:16px}
-.spinner{width:32px;height:32px;border:2.5px solid var(--s2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+.spinner{width:32px;height:32px;border:2.5px solid rgba(0,122,255,.15);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .ltxt{font-size:15px;color:var(--t4)}
 .empty{padding:48px 20px;text-align:center;color:var(--t4);font-size:16px}
 
-/* MODAL */
-.overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s}
+/* ── MODAL ── */
+.overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.25);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
 .overlay.open{opacity:1;pointer-events:all}
-.sheet{background:var(--surface);border-radius:22px 22px 0 0;width:100%;max-width:480px;padding:0 0 32px;transform:translateY(100%);transition:transform .32s cubic-bezier(.32,0,.67,0);max-height:88vh;overflow-y:auto}
-.overlay.open .sheet{transform:translateY(0);transition:transform .32s cubic-bezier(.16,1,.3,1)}
-.handle{width:36px;height:4px;background:var(--s2);border-radius:2px;margin:12px auto 0}
+.sheet{
+  background:rgba(240,246,255,0.82);
+  backdrop-filter:saturate(200%) blur(40px);-webkit-backdrop-filter:saturate(200%) blur(40px);
+  border-radius:26px 26px 0 0;
+  border:1px solid rgba(255,255,255,.75);
+  border-bottom:none;
+  width:100%;max-width:480px;padding:0 0 32px;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.32,0,.67,0);
+  max-height:88vh;overflow-y:auto;
+  box-shadow:0 -4px 40px rgba(0,0,0,.12), 0 1px 0 rgba(255,255,255,.8) inset;
+}
+.overlay.open .sheet{transform:translateY(0);transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.handle{width:36px;height:4px;background:rgba(60,60,67,.2);border-radius:2px;margin:12px auto 0}
 .sh-title{font-size:18px;font-weight:700;text-align:center;padding:14px 20px 0;color:var(--text)}
 
-/* CALENDAR */
+/* ── CALENDAR ── */
 .cal-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px}
 .cal-ml{font-size:17px;font-weight:700;color:var(--text)}
 .cal-nav{display:flex;gap:8px}
-.cal-nb{width:32px;height:32px;border-radius:50%;background:var(--s2);border:none;font-size:17px;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.cal-nb{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.5);
+  border:1px solid rgba(255,255,255,.7);
+  font-size:17px;color:var(--t2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-family:inherit;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
 .cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:0 10px 10px}
 .cdl{text-align:center;font-size:11px;font-weight:600;color:var(--t4);padding:3px 0 8px;text-transform:uppercase}
 .cdw{display:flex;flex-direction:column;align-items:center}
-.cd{aspect-ratio:1;width:100%;max-width:42px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:15px;color:var(--text);cursor:pointer;border:none;background:none;font-family:inherit;transition:background .12s}
+.cd{aspect-ratio:1;width:100%;max-width:42px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:15px;color:var(--text);cursor:pointer;border:none;background:none;font-family:inherit;transition:all .12s}
 .cd.has{font-weight:600}
-.cd.sel{background:var(--blue)!important;color:#fff!important;font-weight:700}
+.cd.sel{
+  background:var(--blue)!important;color:#fff!important;font-weight:700;
+  box-shadow:0 2px 12px rgba(0,122,255,.4);
+}
 .cd.emp{visibility:hidden;pointer-events:none}
 .cd.nodata{color:var(--t4)}
 .dot{width:4px;height:4px;border-radius:50%;background:var(--blue);margin:2px auto 0}
 
-/* MONTH LIST */
+/* ── MONTH LIST ── */
 .mi{padding:16px 20px;font-size:17px;cursor:pointer;border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between;transition:background .1s}
-.mi:active{background:var(--s3)}
+.mi:active{background:rgba(0,0,0,.03)}
 .mi:last-child{border-bottom:none}
-.mck{width:20px;height:20px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center}
+.mck{width:20px;height:20px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,122,255,.3)}
 .mck svg{width:11px;height:11px}
 
-/* PULL TO REFRESH */
+/* ── PULL TO REFRESH ── */
 .ptr-wrap{
   position:fixed;top:var(--hh);left:0;right:0;z-index:250;
   display:flex;align-items:center;justify-content:center;
   height:0;overflow:hidden;transition:height .2s ease;
-  background:var(--bg);
+  background:transparent;
 }
 .ptr-wrap.visible{height:52px}
-.ptr-spinner{
-  width:24px;height:24px;
-  border:2.5px solid rgba(0,122,255,.2);
-  border-top-color:var(--blue);
-  border-radius:50%;
-}
+.ptr-spinner{width:24px;height:24px;border:2.5px solid rgba(0,122,255,.2);border-top-color:var(--blue);border-radius:50%}
 .ptr-spinner.spin{animation:spin .7s linear infinite}
-.ptr-arrow{
-  width:24px;height:24px;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--blue);font-size:20px;
-  transition:transform .2s;
-}
 
-/* DESKTOP */
+/* ── TAB SWITCH ANIMATION ── */
+@keyframes tabslide{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.panel.active{animation:tabslide .3s cubic-bezier(.16,1,.3,1)}
+
+/* ── DESKTOP ── */
 @media(min-width:1024px){
   .top-tabs{
     display:flex;position:fixed;top:var(--hh);left:0;right:0;z-index:200;
-    height:var(--th);background:rgba(242,242,247,.92);
-    backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
-    border-bottom:1px solid var(--border);align-items:stretch;
+    height:var(--th);
+    background:rgba(235,242,252,0.72);
+    backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+    border-bottom:1px solid var(--glass-border);align-items:stretch;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset;
   }
   .ttab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--t4);font-size:9px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;border-bottom:2px solid transparent;transition:all .2s}
   .ttab svg{width:18px;height:18px}
@@ -461,7 +535,14 @@ window.onload=async function(){
     }
     months=data.sheets.map(s=>s.properties.title).filter(n=>!SKIP.some(s=>n.toLowerCase()===s.toLowerCase()));
     if(!months.length){g('panel-day').innerHTML='<div class="empty">Нет листов</div>';return;}
-    curMonth=months[months.length-1];
+    // Выбираем месяц по текущей дате
+    const now=new Date();
+    const curMonthIdx=now.getMonth(); // 0-11
+    const curYear=now.getFullYear();
+    const monthKw=[['январ'],['феврал'],['март','mar'],['апрел'],['май'],['июн'],['июл'],['август'],['сентябр'],['октябр'],['ноябр'],['декабр']];
+    const kw=monthKw[curMonthIdx];
+    const found=months.find(m=>{const ml=m.toLowerCase();return ml.includes(String(curYear))&&kw.some(k=>ml.includes(k));});
+    curMonth=found||months[months.length-1];
     buildSel();
     switchTab('day');
   }catch(e){
@@ -725,7 +806,7 @@ async function loadMonthly(){
       </div></div>
       <div class="sec">Топ расходов</div><div class="card">${prog}</div>
       <div class="sec">Все категории</div>
-      <div class="card">${rows2}<div class="tot-row"><div class="tot-l">Итого</div><div class="tot-v">€${total}</div></div></div>`;
+      <div class="card">${rows2}</div>`;
 
     setTimeout(()=>{
       const ctx=g('dC');if(!ctx)return;
@@ -759,14 +840,16 @@ async function loadEnvelope(){
     const data=await getEnvRows(rows);
     eCache={rows:data};
     if(!data.length){g('panel-envelope').innerHTML='<div class="empty">Нет данных</div>';return;}
-    const last=data[data.length-1];
+    const nonZero=data.filter(r=>pf(r.total)>0);
+    const last=nonZero.length?nonZero[nonZero.length-1]:data[data.length-1];
+    const activeRows=data.filter(r=>pf(r.income)>0||pf(r.expense)>0);
     const labels=data.map(r=>r.date.slice(0,5));
     const totals=data.map(r=>pf(r.total));
     let trows=data.map(r=>`<div class="tbl-r ec"><span style="color:var(--t3)">${r.date.slice(0,5)}</span><span style="color:var(--green);font-weight:600">${r.income!=='0,00'?'+€'+r.income:'—'}</span><span style="color:var(--red)">${r.expense!=='0,00'?'−€'+r.expense:'—'}</span><span style="color:var(--t3);font-size:12px">${r.reason||'—'}</span><span style="color:var(--orange);font-weight:700">€${r.total}</span></div>`).join('');
     g('panel-envelope').innerHTML=`
       <div class="sg c2">
         <div class="stat"><div class="stat-l">Баланс</div><div class="stat-v or">€${last.total}</div></div>
-        <div class="stat"><div class="stat-l">Операций</div><div class="stat-v bl">${data.length}</div></div>
+        <div class="stat"><div class="stat-l">Операций</div><div class="stat-v bl">${activeRows.length}</div></div>
       </div>
       <div class="sec">Динамика</div>
       <div class="card"><div class="ch-wrap"><canvas id="eC" style="max-height:130px"></canvas></div></div>
@@ -836,7 +919,7 @@ async function loadSalary(){
     for(let r=rStart;r<=rEnd;r++){
       const name=String((rows[r]||[])[cName]||'').trim();
       const shifts=(rows[r]||[])[cShifts];
-      if(name)data.push({name,shifts:shifts||0});
+      if(name && name.toLowerCase()!=='конверт оф')data.push({name,shifts:shifts||0});
     }
     if(!data.length){g('panel-salary').innerHTML='<div class="empty">Нет данных</div>';return;}
     const total=data.reduce((s,r)=>s+(+r.shifts||0),0);
@@ -900,6 +983,260 @@ function normDate(d){
   }
   return s;
 }
+</script>
+<!-- ── LOCK SCREEN ── -->
+<div id="lockScreen" style="
+  position:fixed;inset:0;z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:#e8eef5;
+  padding:0 32px;
+">
+  <!-- фон такой же как у приложения -->
+  <div style="position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 15% 10%, rgba(120,180,255,0.55) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 85% 5%,  rgba(180,140,255,0.45) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 60% at 50% 95%, rgba(100,210,200,0.35) 0%, transparent 60%),
+      linear-gradient(160deg, #c8dff5 0%, #d5e8f0 30%, #e0eee8 60%, #dde8f5 100%);
+  "></div>
+
+  <div style="position:relative;z-index:1;width:100%;max-width:320px;text-align:center;">
+
+    <!-- Логотип -->
+    <img src="https://i.postimg.cc/Dy1qT843/Bezymannyj-1-(1).jpg"
+      style="width:72px;height:72px;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.15);margin-bottom:20px">
+
+    <div style="font-size:26px;font-weight:700;color:#1c1c1e;margin-bottom:6px">SO Analytics</div>
+    <div id="lockSubtitle" style="font-size:15px;color:#6d6d72;margin-bottom:36px">Введите пароль</div>
+
+    <!-- Точки PIN -->
+    <div id="pinDots" style="display:flex;gap:16px;justify-content:center;margin-bottom:32px">
+      <div class="pdot" id="d0"></div>
+      <div class="pdot" id="d1"></div>
+      <div class="pdot" id="d2"></div>
+      <div class="pdot" id="d3"></div>
+    </div>
+
+    <!-- Нумпад -->
+    <div id="numpad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+      <button class="npbtn" onclick="pinInput('1')">1</button>
+      <button class="npbtn" onclick="pinInput('2')">2</button>
+      <button class="npbtn" onclick="pinInput('3')">3</button>
+      <button class="npbtn" onclick="pinInput('4')">4</button>
+      <button class="npbtn" onclick="pinInput('5')">5</button>
+      <button class="npbtn" onclick="pinInput('6')">6</button>
+      <button class="npbtn" onclick="pinInput('7')">7</button>
+      <button class="npbtn" onclick="pinInput('8')">8</button>
+      <button class="npbtn" onclick="pinInput('9')">9</button>
+      <button class="npbtn" id="faceBtn" onclick="tryFaceID()" style="font-size:22px">󰊓</button>
+      <button class="npbtn" onclick="pinInput('0')">0</button>
+      <button class="npbtn" onclick="pinDelete()" style="font-size:20px">⌫</button>
+    </div>
+
+    <div id="lockError" style="height:20px;font-size:14px;color:#ff3b30;font-weight:600"></div>
+  </div>
+</div>
+
+<style>
+.pdot{
+  width:14px;height:14px;border-radius:50%;
+  background:rgba(60,60,67,.18);
+  transition:all .15s;
+}
+.pdot.filled{background:#007aff;transform:scale(1.1)}
+.pdot.error{background:#ff3b30}
+
+.npbtn{
+  height:72px;border-radius:50%;
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.8);
+  font-size:26px;font-weight:400;color:#1c1c1e;
+  cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  box-shadow:0 2px 8px rgba(0,0,0,.08), 0 1px 0 rgba(255,255,255,.9) inset;
+  transition:all .1s;
+  display:flex;align-items:center;justify-content:center;
+}
+.npbtn:active{transform:scale(.9);opacity:.7}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}
+.shake{animation:shake .35s ease}
+</style>
+
+<script>
+// ── LOCK SCREEN LOGIC ──────────────────────────────
+
+const LOCK_KEY   = 'so_pin_hash';
+const BIOM_KEY   = 'so_biometrics';
+const SETUP_KEY  = 'so_pin_setup';
+
+let pinBuffer = '';
+let lockMode  = 'check'; // 'check' | 'setup1' | 'setup2'
+let setupFirst = '';
+
+async function sha256(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function initLock(){
+  const hasPin = localStorage.getItem(LOCK_KEY);
+  const faceBtn = document.getElementById('faceBtn');
+
+  if(!hasPin){
+    // Первый запуск — настройка пин-кода
+    lockMode = 'setup1';
+    document.getElementById('lockSubtitle').textContent = 'Придумайте пароль (4 цифры)';
+    faceBtn.style.visibility = 'hidden';
+    return;
+  }
+
+  // Есть пин — режим проверки
+  lockMode = 'check';
+  document.getElementById('lockSubtitle').textContent = 'Введите пароль';
+
+  // Проверяем поддержку биометрики
+  const biomEnabled = localStorage.getItem(BIOM_KEY) === '1';
+  if(biomEnabled && window.PublicKeyCredential){
+    faceBtn.textContent = '🔒';
+    faceBtn.style.fontSize = '24px';
+    setTimeout(tryFaceID, 400); // автозапуск Face ID
+  } else {
+    faceBtn.style.visibility = 'hidden';
+  }
+}
+
+function pinInput(digit){
+  if(pinBuffer.length >= 4) return;
+  pinBuffer += digit;
+  updateDots();
+  if(pinBuffer.length === 4){
+    setTimeout(()=>processPin(), 80);
+  }
+}
+
+function pinDelete(){
+  pinBuffer = pinBuffer.slice(0,-1);
+  updateDots();
+  document.getElementById('lockError').textContent = '';
+}
+
+function updateDots(){
+  for(let i=0;i<4;i++){
+    const d = document.getElementById('d'+i);
+    d.classList.toggle('filled', i < pinBuffer.length);
+    d.classList.remove('error');
+  }
+}
+
+async function processPin(){
+  if(lockMode === 'setup1'){
+    setupFirst = pinBuffer;
+    pinBuffer = '';
+    updateDots();
+    lockMode = 'setup2';
+    document.getElementById('lockSubtitle').textContent = 'Повторите пароль';
+    return;
+  }
+
+  if(lockMode === 'setup2'){
+    if(pinBuffer !== setupFirst){
+      showPinError('Пароли не совпадают');
+      return;
+    }
+    // Сохраняем хэш
+    const h = await sha256(pinBuffer);
+    localStorage.setItem(LOCK_KEY, h);
+    localStorage.setItem(SETUP_KEY, '1');
+    // Предложить Face ID
+    await offerFaceID();
+    unlock();
+    return;
+  }
+
+  // Режим проверки
+  const h = await sha256(pinBuffer);
+  const saved = localStorage.getItem(LOCK_KEY);
+  if(h === saved){
+    unlock();
+  } else {
+    showPinError('Неверный пароль');
+  }
+}
+
+function showPinError(msg){
+  pinBuffer = '';
+  updateDots();
+  // Красные точки
+  for(let i=0;i<4;i++) document.getElementById('d'+i).classList.add('error');
+  document.getElementById('lockError').textContent = msg;
+  // Тряска
+  document.getElementById('pinDots').classList.add('shake');
+  setTimeout(()=>{
+    document.getElementById('pinDots').classList.remove('shake');
+    for(let i=0;i<4;i++) document.getElementById('d'+i).classList.remove('error');
+    document.getElementById('lockError').textContent = '';
+  }, 600);
+}
+
+async function offerFaceID(){
+  if(!window.PublicKeyCredential) return;
+  const avail = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(()=>false);
+  if(!avail) return;
+
+  return new Promise(resolve=>{
+    // Простой confirm — iOS покажет нативный диалог
+    const ok = confirm('Использовать Face ID / Touch ID для входа?');
+    if(ok){
+      localStorage.setItem(BIOM_KEY,'1');
+    }
+    resolve();
+  });
+}
+
+async function tryFaceID(){
+  if(!window.PublicKeyCredential) return;
+  try{
+    // Используем platform authenticator для верификации
+    const avail = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    if(!avail) return;
+
+    const challenge = new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+
+    const cred = await navigator.credentials.get({
+      publicKey:{
+        challenge,
+        timeout:30000,
+        userVerification:'required',
+        rpId: window.location.hostname || 'localhost',
+      }
+    }).catch(()=>null);
+
+    if(cred){
+      unlock();
+    }
+  }catch(e){
+    // Пользователь отменил — ничего не делаем
+  }
+}
+
+function unlock(){
+  const ls = document.getElementById('lockScreen');
+  ls.style.transition = 'opacity .3s, transform .3s';
+  ls.style.opacity = '0';
+  ls.style.transform = 'scale(1.04)';
+  setTimeout(()=>ls.remove(), 320);
+}
+
+// Запуск
+initLock();
 </script>
 </body>
 </html>
