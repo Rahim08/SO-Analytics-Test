@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="SO Analytics TEST">
+<meta name="apple-mobile-web-app-title" content="SO Analytics">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/Dy1qT843/Bezymannyj-1-(1).jpg">
-<title>SO Analytics TEST</title>
+<title>SO Analytics</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
@@ -316,7 +316,6 @@ const CFG = {
   <div class="ttab" onclick="switchTab('kassa')" id="ttab-kassa"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L2 7h20z"/></svg>Касса</div>
   <div class="ttab" onclick="switchTab('salary')" id="ttab-salary"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Смены</div>
   <div class="ttab" onclick="switchTab('debt')" id="ttab-debt"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Долги</div>
-  <div class="ttab" onclick="switchTab('compare')" id="ttab-compare"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Сравнение</div>
 </div>
 
 <div class="scroll no-daybar" id="scrollArea">
@@ -333,7 +332,6 @@ const CFG = {
       <div class="badge">⚙️ В разработке</div>
     </div>
   </div>
-  <div class="panel" id="panel-compare"><div class="loading"><div class="spinner"></div><div class="ltxt">Загрузка...</div></div></div>
 </div>
 
 <div class="day-bar" id="dayBar" style="display:none">
@@ -352,7 +350,6 @@ const CFG = {
   <button class="bnav-tab" onclick="switchTab('kassa')" id="btab-kassa"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L2 7h20z"/></svg>Касса</button>
   <button class="bnav-tab" onclick="switchTab('salary')" id="btab-salary"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Смены</button>
   <button class="bnav-tab" onclick="switchTab('debt')" id="btab-debt"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Долги</button>
-  <button class="bnav-tab" onclick="switchTab('compare')" id="btab-compare"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Сравнение</button>
 </div>
 
 <div class="overlay" id="calModal" onclick="bgClose(event,'calModal')">
@@ -523,7 +520,6 @@ function loadTab(t){
   if(t==='envelope') loadEnvelope();
   if(t==='kassa')    loadKassa();
   if(t==='salary')   loadSalary();
-  if(t==='compare')  loadCompare();
 }
 
 // ── ДЕНЬ ─────────────────────────────────────────
@@ -853,125 +849,6 @@ async function loadSalary(){
       <div class="sec">Сотрудники</div>
       <div class="card">${srows}</div>`;
   }catch(e){g('panel-salary').innerHTML=`<div class="empty">Ошибка: ${e.message}</div>`;}
-}
-
-// ── СРАВНЕНИЕ ────────────────────────────────────
-async function loadCompare(){
-  spin('compare');
-  try{
-    // Get all months
-    const allMonths = months.filter(m => !['loocker_data','Сводка','сводка','Шаблон','Template','app_settings'].includes(m));
-    
-    // Load data for current and previous months (up to 4)
-    const recentMonths = allMonths.slice(-4);
-    const monthData = [];
-    
-    for(const mn of recentMonths){
-      try{
-        const rows = await getSheetData(mn);
-        const {cSum, rStart, rEnd, rTotal} = CFG.MONTHLY;
-        const total = parseFloat(String((rows[rTotal]||[])[cSum]||0).replace(',','.')) || 0;
-        
-        // Get kassa data
-        const {colBalance, colIncome, rowStart, rowEnd} = CFG.KASSA;
-        let totalIncome = 0;
-        let lastBalance = 0;
-        for(let r=rowStart; r<=rowEnd; r++){
-          const inc = (rows[r]||[])[colIncome];
-          const bal = (rows[r]||[])[colBalance];
-          if(inc) totalIncome += parseFloat(String(inc).replace(',','.')) || 0;
-          if(bal !== undefined && bal !== '') lastBalance = parseFloat(String(bal).replace(',','.')) || 0;
-        }
-        
-        monthData.push({month: mn, expenses: total, income: totalIncome, lastBalance});
-      }catch(e){ console.log('Error loading', mn, e); }
-    }
-    
-    if(!monthData.length){ g('panel-compare').innerHTML = '<div class="empty">Нет данных</div>'; return; }
-    
-    // Calculate week data for current month
-    const rows = await getSheetData(curMonth);
-    const weekData = calcWeeks(rows);
-    
-    // Build HTML
-    const labels = monthData.map(d => d.month.split(' ')[0].substring(0,3));
-    const expVals = monthData.map(d => d.expenses);
-    const incVals = monthData.map(d => d.income);
-    const maxVal = Math.max(...expVals, ...incVals, 1);
-    
-    // Month comparison cards
-    let monthCards = monthData.map((d,i) => {
-      const prev = monthData[i-1];
-      const diff = prev ? d.expenses - prev.expenses : 0;
-      const diffPct = prev && prev.expenses > 0 ? Math.round(diff/prev.expenses*100) : 0;
-      const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
-      const arrowColor = diff > 0 ? 'var(--red)' : diff < 0 ? 'var(--green)' : 'var(--t4)';
-      const isCurrent = d.month === curMonth;
-      return `<div style="background:var(--surface);border-radius:14px;padding:14px;box-shadow:var(--sh);${isCurrent?'border:2px solid var(--blue)':''}">
-        <div style="font-size:12px;color:var(--t3);font-weight:600;margin-bottom:8px">${d.month}</div>
-        <div style="font-size:20px;font-weight:700;color:var(--red);letter-spacing:-.4px">€${fv(d.expenses)}</div>
-        <div style="font-size:12px;color:var(--green);margin-top:4px">Доход: €${fv(d.income)}</div>
-        ${prev?`<div style="font-size:12px;color:${arrowColor};margin-top:4px;font-weight:600">${arrow} ${Math.abs(diffPct)}% vs пред.</div>`:''}
-      </div>`;
-    }).join('');
-
-    // Weekly bars for current month
-    let weekBars = '';
-    if(weekData.length){
-      const maxW = Math.max(...weekData.map(w=>w.expenses), 1);
-      weekBars = weekData.map((w,i) => {
-        const h = Math.round(w.expenses/maxW*100);
-        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-          <div style="font-size:11px;font-weight:600;color:var(--t3)">€${Math.round(w.expenses)}</div>
-          <div style="width:100%;background:var(--s2);border-radius:6px 6px 0 0;overflow:hidden;height:80px;display:flex;align-items:flex-end">
-            <div style="width:100%;height:${h}%;background:var(--blue);border-radius:4px 4px 0 0;transition:height .6s"></div>
-          </div>
-          <div style="font-size:11px;color:var(--t4)">Нед ${i+1}</div>
-        </div>`;
-      }).join('');
-    }
-
-    g('panel-compare').innerHTML = `
-      <div class="sec">Сравнение месяцев</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">${monthCards}</div>
-      
-      <div class="sec">Доходы vs Расходы</div>
-      <div class="card"><div class="ch-wrap"><canvas id="cmpC" style="max-height:150px"></canvas></div></div>
-      
-      <div class="sec">Расходы по неделям · ${curMonth}</div>
-      <div class="card"><div style="padding:16px;display:flex;align-items:flex-end;gap:8px">${weekBars||'<div class="empty">Нет данных</div>'}</div></div>
-    `;
-    
-    setTimeout(()=>{
-      const ctx=g('cmpC'); if(!ctx)return;
-      if(charts.cmp)charts.cmp.destroy();
-      charts.cmp=new Chart(ctx,{
-        type:'bar',
-        data:{
-          labels,
-          datasets:[
-            {label:'Расход',data:expVals,backgroundColor:'rgba(255,59,48,.75)',borderRadius:4},
-            {label:'Доход',data:incVals,backgroundColor:'rgba(52,199,89,.75)',borderRadius:4}
-          ]
-        },
-        options:{responsive:true,plugins:{legend:{labels:{color:'var(--t3)',font:{size:11},boxWidth:10}}},scales:{x:{ticks:{color:'var(--t4)',font:{size:11}},grid:{display:false}},y:{ticks:{color:'var(--t4)',font:{size:10},callback:v=>'€'+v},grid:{color:'rgba(60,60,67,.06)'}}}}
-      });
-    },80);
-    
-  }catch(e){ g('panel-compare').innerHTML=`<div class="empty">Ошибка: ${e.message}</div>`; }
-}
-
-function calcWeeks(rows){
-  // Group days by week number in month
-  const days = extractDays(rows, curMonth);
-  const weeks = [{expenses:0},{expenses:0},{expenses:0},{expenses:0},{expenses:0}];
-  days.forEach(d => {
-    const [dd] = d.date.split('.');
-    const day = parseInt(dd);
-    const weekIdx = Math.min(Math.floor((day-1)/7), 4);
-    weeks[weekIdx].expenses += parseFloat(String(d.total||0).replace(',','.')) || 0;
-  });
-  return weeks.filter(w => w.expenses > 0);
 }
 
 // ── UTILS ─────────────────────────────────────────
