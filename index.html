@@ -42,12 +42,13 @@ body{
 /* ── HEADER ── */
 .header{
   position:fixed;top:0;left:0;right:0;z-index:300;
-  height:var(--hh);
+  height:calc(var(--hh) + env(safe-area-inset-top, 0px));
+  padding-top:env(safe-area-inset-top, 0px);
   background:rgba(242,242,247,0.95);
   backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
   border-bottom:1px solid rgba(60,60,67,.18);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;
+  padding-left:16px;padding-right:16px;
 }
 .logo{font-size:18px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
 .logo img{height:32px;width:32px;object-fit:contain;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
@@ -68,7 +69,7 @@ body{
 
 /* ── SCROLL ── */
 .scroll{
-  position:fixed;top:var(--hh);left:0;right:0;
+  position:fixed;top:calc(var(--hh) + env(safe-area-inset-top, 0px));left:0;right:0;
   bottom:calc(var(--bnh) + var(--bbh));
   overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
   z-index:1;
@@ -279,7 +280,7 @@ body{
 
 /* ── PULL TO REFRESH ── */
 .ptr-wrap{
-  position:fixed;top:var(--hh);left:0;right:0;z-index:250;
+  position:fixed;top:calc(var(--hh) + env(safe-area-inset-top, 0px));left:0;right:0;z-index:250;
   display:flex;align-items:center;justify-content:center;
   height:0;overflow:hidden;transition:height .2s ease;
   background:transparent;
@@ -295,7 +296,7 @@ body{
 /* ── DESKTOP ── */
 @media(min-width:1024px){
   .top-tabs{
-    display:flex;position:fixed;top:var(--hh);left:0;right:0;z-index:200;
+    display:flex;position:fixed;top:calc(var(--hh) + env(safe-area-inset-top, 0px));left:0;right:0;z-index:200;
     height:var(--th);
     background:rgba(235,242,252,0.72);
     backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
@@ -326,6 +327,12 @@ body{
   backdrop-filter:saturate(180%) blur(20px) !important;
   -webkit-backdrop-filter:saturate(180%) blur(20px) !important;
   border-bottom-color:rgba(60,60,67,.18) !important;
+}
+body.dark .header{
+  background:#1c1c1e !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border-bottom-color:rgba(255,255,255,.1) !important;
 }
 
 /* ── DARK MODE ── */
@@ -463,7 +470,7 @@ const CFG = {
       <div class="debt-ic">💳</div>
       <div class="debt-t">Задолженность</div>
       <div class="debt-tx">Этот раздел появится в одном из следующих обновлений.</div>
-      <div class="badge">🔜 Скоро</div>
+      <div class="badge">⚙️ В разработке</div>
     </div>
   </div>
 </div>
