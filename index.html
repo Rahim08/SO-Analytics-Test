@@ -70,26 +70,26 @@ body{
 /* ── SCROLL ── */
 .scroll{
   position:fixed;top:calc(var(--hh) + env(safe-area-inset-top, 0px));left:0;right:0;
-  bottom:calc(var(--bnh) + var(--bbh));
+  bottom:calc(var(--bnh) + var(--bbh) + env(safe-area-inset-bottom, 0px));
   overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
   z-index:1;
 }
 .scroll::-webkit-scrollbar{display:none}
-.scroll.no-daybar{bottom:var(--bnh)}
+.scroll.no-daybar{bottom:calc(var(--bnh) + env(safe-area-inset-bottom, 0px))}
 .panel{display:none;padding:16px 16px 8px;animation:up .28s cubic-bezier(.16,1,.3,1)}
 .panel.active{display:block}
 @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── BOTTOM NAV — Liquid Glass ── */
 .bottom-nav{
-  position:fixed;bottom:calc(-1 * env(safe-area-inset-bottom, 0px));left:0;right:0;z-index:300;
-  height:var(--bnh);
+  position:fixed;bottom:0;left:0;right:0;z-index:300;
+  height:calc(var(--bnh) + env(safe-area-inset-bottom, 0px));
   background:rgba(249,249,249,0.95);
   backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
   border-top:1px solid rgba(60,60,67,.18);
   display:flex;align-items:flex-start;
   padding-top:10px;
-  padding-bottom:0;
+  padding-bottom:env(safe-area-inset-bottom, 0px);
 }
 .bnav-tab{
   flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
@@ -112,8 +112,7 @@ body{
   backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
   border-top:1px solid rgba(60,60,67,.18);
   display:flex;align-items:center;padding:0 16px;gap:10px;
-  bottom:var(--bnh);
-}
+  bottom:calc(var(--bnh) + env(safe-area-inset-bottom, 0px));}
 .nav-btn{
   width:44px;height:44px;border-radius:50%;
   background:var(--s2);border:none;
