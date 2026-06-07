@@ -11,12 +11,9 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
 html{font-size:16px;height:100%;-webkit-text-size-adjust:100%}
-/* SF Pro — системный шрифт Apple на всех устройствах Apple */
-body{
-  height:100%;
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Arial,sans-serif;
-  overflow:hidden;background:var(--bg);
-}
+body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Arial,sans-serif;overflow:hidden;background:var(--bg)}
+
+/* ── VARIABLES ── */
 :root{
   --bg:#f2f2f7;--surface:#fff;
   --s2:rgba(118,118,128,.12);--s3:rgba(118,118,128,.07);
@@ -28,6 +25,7 @@ body{
   --hh:56px;--bnh:80px;--bbh:52px;
   --hbg:rgba(242,242,247,.95);--nbg:rgba(248,248,252,.97);
 }
+/* Dark — CSS variables only, no body background override that fights the header */
 body.dark{
   --bg:#1c1c1e;--surface:#2c2c2e;
   --s2:rgba(255,255,255,.1);--s3:rgba(255,255,255,.06);
@@ -38,15 +36,34 @@ body.dark{
 }
 
 /* ── SPLASH ── */
-.splash{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease}
+.splash{
+  position:fixed;inset:0;z-index:9000;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center; /* logo slightly above center */
+  padding-bottom:120px;   /* pushes logo up */
+  transition:opacity .4s ease;
+}
 .splash-logo{width:110px;height:110px;display:flex;align-items:center;justify-content:center}
 .splash-logo img{width:100%;height:100%;object-fit:contain}
 body.dark .splash-logo img{filter:invert(1)}
-.splash-label{position:absolute;bottom:44px;left:0;right:0;text-align:center;font-size:11px;font-weight:700;letter-spacing:3px;color:var(--t4);text-transform:uppercase}
+.splash-label{
+  position:absolute;bottom:44px;left:0;right:0;
+  text-align:center;font-size:11px;font-weight:700;letter-spacing:3px;
+  color:var(--t4);text-transform:uppercase;
+}
 .splash.hide{opacity:0;pointer-events:none}
 
-/* ── HEADER ── */
-.header{position:fixed;top:0;left:0;right:0;z-index:300;height:var(--hh);background:var(--hbg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border);display:none;align-items:center;justify-content:space-between;padding:0 16px}
+/* ── HEADER ── header uses CSS var --hbg so it auto-switches ── */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  height:var(--hh);
+  background:var(--hbg);           /* ← picks up dark/light from CSS var */
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--border);
+  display:none;align-items:center;justify-content:space-between;padding:0 16px;
+}
 .header.show{display:flex}
 .hlogo{width:34px;height:34px;display:flex;align-items:center;justify-content:center}
 .hlogo img{width:30px;height:30px;object-fit:contain}
@@ -92,11 +109,11 @@ body.dark .hlogo img{filter:invert(1)}
 .stat{background:var(--surface);border-radius:14px;padding:14px 12px;box-shadow:var(--sh)}
 .stat-l{font-size:10px;color:var(--t3);font-weight:600;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stat-v{font-size:22px;font-weight:700;letter-spacing:-.5px;line-height:1}
-.stat-v.sm{font-size:17px}
+.stat-v.sm{font-size:16px}
 .stat-s{font-size:11px;color:var(--t4);margin-top:4px}
 .bl{color:var(--blue)}.gr{color:var(--green)}.rd{color:var(--red)}.or{color:var(--orange)}.pu{color:var(--purple)}
 
-/* ── LIST ROWS ── */
+/* ── LIST ── */
 .lrow{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--b2)}
 .lrow:last-child{border-bottom:none}
 .lname{font-size:15px;color:var(--text);flex:1;padding-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -108,11 +125,6 @@ body.dark .hlogo img{filter:invert(1)}
 .tbl-r:last-child{border-bottom:none}
 .gc5{grid-template-columns:52px 1fr 1fr 1fr 1fr}
 .gc4i{grid-template-columns:52px 1fr 1fr 1fr}
-
-/* ── INKASS TABLE ── */
-.ink-tbl-h{display:grid;grid-template-columns:52px 1fr 1fr 1fr;padding:8px 14px;background:var(--s3);border-bottom:1px solid var(--b2);font-size:10px;color:var(--t4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;gap:4px}
-.ink-tbl-r{display:grid;grid-template-columns:52px 1fr 1fr 1fr;padding:11px 14px;border-bottom:1px solid var(--b2);font-size:13px;gap:4px;color:var(--text)}
-.ink-tbl-r:last-child{border-bottom:none}
 
 /* ── PROGRESS ── */
 .prog-i{padding:10px 16px;border-bottom:1px solid var(--b2)}
@@ -131,7 +143,7 @@ body.dark .hlogo img{filter:invert(1)}
 .donut-nm{font-size:12px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .donut-val{font-size:12px;font-weight:600;color:var(--text)}
 
-/* ── SALARY ROW (compact) ── */
+/* ── SALARY ROW ── */
 .sal-r{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--b2)}
 .sal-r:last-child{border-bottom:none}
 .sal-left{flex:1;min-width:0}
@@ -142,17 +154,6 @@ body.dark .hlogo img{filter:invert(1)}
 .sal-card{font-size:11px;color:var(--t4);margin-top:1px}
 .sal-bar{margin-top:5px;height:3px;background:var(--s2);border-radius:2px;overflow:hidden}
 .sal-bar-f{height:100%;border-radius:2px;background:var(--red);transition:width 1s cubic-bezier(.16,1,.3,1)}
-
-/* ── ИНКАССАЦИЯ DAY BLOCK ── */
-.inkday-block{padding:14px 16px;border-bottom:1px solid var(--b2)}
-.inkday-block:last-child{border-bottom:none}
-.inkday-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.inkday-date{font-size:13px;font-weight:600;color:var(--t3)}
-.inkday-amt{font-size:17px;font-weight:700;color:var(--orange)}
-.inkday-reason{font-size:12px;color:var(--t4);margin-bottom:4px}
-.inkday-row{display:flex;justify-content:space-between;font-size:12px}
-.inkday-label{color:var(--t3)}
-.inkday-val{font-weight:600}
 
 /* ── CHART ── */
 .ch-wrap{padding:12px 14px 14px}
@@ -194,17 +195,12 @@ const DOW=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
 const SKIP=['loocker_data','Сводка','сводка','Шаблон','Template','app_settings'];
 const COLORS=['#007aff','#ff3b30','#34c759','#ff9500','#af52de','#00c7be','#ff6b35','#5856d6'];
 
-// CFG — row indices 0-based
-// ВАЖНО: строка "ИТОГО" и заголовочные строки пропускаются по имени/пустоте
+// CFG — 0-based row indices. ИТОГО rows are skipped by date-validity check.
 const CFG={
-  KASSA:{rStart:180,rEnd:211,cDate:0,cOpen:1,cIncome:2,cExpense:3,cBalance:4},
-  // rEnd:211 = 30 days (row 181..212 in sheet = index 180..211), row 212 = ИТОГО → skip
-  INKASS:{rStart:215,rEnd:245,cDate:0,cSum:1,cReason:2,cTotal:3},
-  // rEnd:245 = 30 days, row 246/247 = ИТОГО → skip
-  SALARY:{rStart:250,rEnd:264,cName:0,cSalary:1,cDeduct:2,cAbsent:3,cTotalDeduct:4,cCard:5,cCash:6},
-  // rEnd:264 = 15 employees, row 265/266 = ИТОГО → skip
+  KASSA:  {rStart:180,rEnd:211,cDate:0,cOpen:1,cIncome:2,cExpense:3,cBalance:4},
+  INKASS: {rStart:215,rEnd:245,cDate:0,cSum:1,cReason:2,cTotal:3},
+  SALARY: {rStart:250,rEnd:264,cName:0,cSalary:1,cDeduct:2,cAbsent:3,cTotalDeduct:4,cCard:5,cCash:6},
   EXPENSES:{rStart:268,rEnd:298,cName:0,cSum:1},
-  // rEnd:298, row 299/300 = Итого → skip
   EMP_ROW_START:2,EMP_COUNT:15,OTHER_ROW_START:18,TOTAL_ROW_OFFSET:32,
 };
 </script>
@@ -264,11 +260,10 @@ const CFG={
   </button>
 </div>
 
-<!-- MONTH MODAL -->
+<!-- MODALS -->
 <div class="overlay" id="monthModal" onclick="bgClose(event,'monthModal')">
   <div class="sheet"><div class="handle"></div><div class="sh-title">Выбор месяца</div><div id="monthList" style="padding:10px 0 6px"></div></div>
 </div>
-<!-- DAY MODAL -->
 <div class="overlay" id="dayModal" onclick="bgClose(event,'dayModal')">
   <div class="sheet">
     <div class="handle"></div><div class="sh-title">Выбор дня</div>
@@ -290,14 +285,18 @@ function applyLogos(){
   ['splashLogo','hdrLogo'].forEach(id=>{const el=document.getElementById(id);if(el){el.src=LOGO_URI;el.style.filter=f;}});
 }
 
-// ── DARK ──
+// ── DARK MODE ──
+// Key insight: we only toggle a class on <body>.
+// All colors (including header) come from CSS variables that auto-update.
+// No JS inline style overrides on the header — pure CSS var solution.
 function toggleDark(){
   document.body.classList.toggle('dark');
-  try{localStorage.setItem('so_ana_dark',document.body.classList.contains('dark')?'1':'0');}catch(e){}
-  document.getElementById('darkBtn').textContent=document.body.classList.contains('dark')?'☀️':'🌙';
+  const isDark=document.body.classList.contains('dark');
+  try{localStorage.setItem('so_ana_dark',isDark?'1':'0');}catch(e){}
+  document.getElementById('darkBtn').textContent=isDark?'☀️':'🌙';
   applyLogos();
 }
-(function(){
+(function initTheme(){
   try{if(localStorage.getItem('so_ana_dark')==='1')document.body.classList.add('dark');}catch(e){}
   applyLogos();
   document.getElementById('darkBtn').textContent=document.body.classList.contains('dark')?'☀️':'🌙';
@@ -341,8 +340,7 @@ async function loadSheets(){
     if(d.error){showErr('day','API: '+d.error.message);return;}
     months=d.sheets.map(s=>s.properties.title).filter(n=>!SKIP.some(s=>n.toLowerCase()===s.toLowerCase()));
     if(!months.length){showErr('day','Нет листов');return;}
-    const now=new Date();
-    const cur=MRU[now.getMonth()]+' '+now.getFullYear();
+    const now=new Date(),cur=MRU[now.getMonth()]+' '+now.getFullYear();
     curMonth=months.includes(cur)?cur:months[months.length-1];
     buildMonthSel();curDay=new Date();updateDayBar();switchTab('day');
   }catch(e){showErr('day','Ошибка: '+e.message);}
@@ -375,14 +373,13 @@ function switchTab(tab,force=false){
   if(!tabLoaded[tab]||force){tabLoaded[tab]=true;loadTab(tab);}
 }
 function loadTab(t){
-  if(t==='day')loadDay();
-  else if(t==='month')loadMonth();
-  else if(t==='kassa')loadKassa();
-  else if(t==='inkass')loadInkass();
-  else if(t==='salary')loadSalary();
+  if(t==='day')loadDay();else if(t==='month')loadMonth();
+  else if(t==='kassa')loadKassa();else if(t==='inkass')loadInkass();else if(t==='salary')loadSalary();
 }
 
-// ─────────────── ДЕНЬ ───────────────
+// ═══════════════════════════════════════
+// ДЕНЬ
+// ═══════════════════════════════════════
 function updateDayBar(){
   const d=curDay,dIM=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
   document.getElementById('dayMain').textContent=fmt(d);
@@ -394,9 +391,7 @@ function fmt(d){return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth
 function findDayBlock(rows,dateStr){
   for(let r=0;r<Math.min(200,rows.length);r++){
     const row=rows[r]||[];
-    for(let c=0;c<row.length;c++){
-      if(String(row[c]||'').includes(dateStr))return{blockRow:r,blockCol:c};
-    }
+    for(let c=0;c<row.length;c++){if(String(row[c]||'').includes(dateStr))return{blockRow:r,blockCol:c};}
   }
   return null;
 }
@@ -433,18 +428,16 @@ async function loadDay(){
     const{rStart:ks,rEnd:ke,cDate:kd,cOpen:ko,cIncome:ki,cExpense:kx,cBalance:kb}=CFG.KASSA;
     for(let r=ks;r<=Math.min(ke,rows.length-1);r++){
       const date=(rows[r]||[])[kd];if(!date&&date!==0)continue;
-      if(normDate(date)===fmt(curDay)){
-        kassaOpen=pf((rows[r]||[])[ko]);kassaIncome=pf((rows[r]||[])[ki]);
-        kassaExpense=pf((rows[r]||[])[kx]);kassaBalance=pf((rows[r]||[])[kb]);break;
-      }
+      if(normDate(date)===fmt(curDay)){kassaOpen=pf((rows[r]||[])[ko]);kassaIncome=pf((rows[r]||[])[ki]);kassaExpense=pf((rows[r]||[])[kx]);kassaBalance=pf((rows[r]||[])[kb]);break;}
     }
 
-    // Inkass for this day
-    let inkSum=0,inkReason='';
-    const{rStart:is,rEnd:ie,cDate:id2,cSum:isum,cReason:irs}=CFG.INKASS;
-    for(let r=is;r<=Math.min(ie,rows.length-1);r++){
+    // Инкассация for this day — columns: date, sum, reason, running_total
+    // (no separate expense column in table — only sum + reason)
+    let inkSum=0,inkReason='',inkTotal=0;
+    const{rStart:is2,rEnd:ie2,cDate:id2,cSum:isum,cReason:irs,cTotal:itot}=CFG.INKASS;
+    for(let r=is2;r<=Math.min(ie2,rows.length-1);r++){
       const date=(rows[r]||[])[id2];if(!date&&date!==0)continue;
-      if(normDate(date)===fmt(curDay)){inkSum=pf((rows[r]||[])[isum]);inkReason=String((rows[r]||[])[irs]||'').trim();break;}
+      if(normDate(date)===fmt(curDay)){inkSum=pf((rows[r]||[])[isum]);inkReason=String((rows[r]||[])[irs]||'').trim();inkTotal=pf((rows[r]||[])[itot]);break;}
     }
 
     const present=emps.filter(e=>!e.absent);
@@ -463,25 +456,24 @@ async function loadDay(){
       <div class="stat"><div class="stat-l">Касса</div><div class="stat-v sm bl">${fv(kassaBalance)}</div></div>
     </div>`;
 
-    // Expenses block — only if any
+    // Расходы
     html+=`<div class="sec">Расходы</div><div class="card">`;
     if(others.length){
       others.forEach(o=>{html+=`<div class="lrow"><div class="lname">${esc(o.name)}</div><div class="lval rd">−${fv(o.sum)}</div></div>`;});
-    } else {
-      html+=`<div class="empty" style="padding:24px">Нет расходов</div>`;
-    }
+    }else{html+=`<div class="empty" style="padding:24px">Нет расходов</div>`;}
     html+=`</div>`;
 
-    // Инкассация block
+    // Инкассация block — 4 sections: приход, расход(из кассы), причина, итог
     html+=`<div class="sec">Инкассация</div><div class="card" style="padding:14px 16px">`;
     html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><div style="font-size:18px">💰</div><div style="font-size:15px;font-weight:600;color:var(--text)">${fmt(curDay)}</div></div>`;
-    html+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b2);border-radius:8px;overflow:hidden">`;
-    html+=`<div style="background:var(--surface);padding:10px 12px"><div style="font-size:11px;color:var(--t3);margin-bottom:4px">Приход</div><div style="font-size:17px;font-weight:700;color:var(--green)">${inkSum>0?fv(inkSum):'—'}</div></div>`;
-    html+=`<div style="background:var(--surface);padding:10px 12px"><div style="font-size:11px;color:var(--t3);margin-bottom:4px">Причина</div><div style="font-size:13px;color:var(--t2)">${inkReason||'—'}</div></div>`;
-    html+=`<div style="background:var(--surface);padding:10px 12px"><div style="font-size:11px;color:var(--t3);margin-bottom:4px">Итог</div><div style="font-size:17px;font-weight:700;color:var(--orange)">${fv(inkSum)}</div></div>`;
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:var(--b2);border-radius:10px;overflow:hidden">`;
+    html+=`<div style="background:var(--surface);padding:10px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Приход</div><div style="font-size:15px;font-weight:700;color:var(--green)">${inkSum>0?fv(inkSum):'—'}</div></div>`;
+    html+=`<div style="background:var(--surface);padding:10px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Расход</div><div style="font-size:15px;font-weight:700;color:var(--red)">${kassaExpense>0?fv(kassaExpense):'—'}</div></div>`;
+    html+=`<div style="background:var(--surface);padding:10px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Причина</div><div style="font-size:12px;color:var(--t2);line-height:1.3">${inkReason||'—'}</div></div>`;
+    html+=`<div style="background:var(--surface);padding:10px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Итог</div><div style="font-size:15px;font-weight:700;color:var(--orange)">${fv(inkTotal)}</div></div>`;
     html+=`</div></div>`;
 
-    // Absent block (only if any)
+    // Absent
     if(absent.length){
       html+=`<div class="sec">Отсутствуют (${absent.length})</div><div class="card">`;
       absent.forEach(e=>{html+=`<div class="lrow"><div class="lname" style="color:var(--t3)">${esc(e.name)}</div><div style="font-size:13px;color:var(--red)">✗</div></div>`;});
@@ -492,7 +484,9 @@ async function loadDay(){
   }catch(e){showErr('day','Ошибка: '+e.message);}
 }
 
-// ─────────────── МЕСЯЦ ───────────────
+// ═══════════════════════════════════════
+// МЕСЯЦ
+// ═══════════════════════════════════════
 async function loadMonth(){
   spin('month');
   try{
@@ -505,19 +499,18 @@ async function loadMonth(){
       const sum=pf((rows[r]||[])[cSum]);
       if(sum>0){items.push({name,sum});total+=sum;}
     }
-    // Income from KASSA — sum only cIncome column, skip header/total rows
+    // Income — sum cIncome from KASSA, valid date rows only
     const{rStart:ks,rEnd:ke,cDate:kd,cIncome:ki}=CFG.KASSA;
     let totalIncome=0;
     for(let r=ks;r<=Math.min(ke,rows.length-1);r++){
       const date=(rows[r]||[])[kd];if(!date&&date!==0)continue;
-      const ds=normDate(date);if(!ds)continue;
+      const ds=normDate(date);if(!ds||ds.length<8)continue;
       totalIncome+=pf((rows[r]||[])[ki]);
     }
 
     if(!items.length){document.getElementById('panel-month').innerHTML=`<div class="empty">Нет данных за ${curMonth}</div>`;return;}
     items.sort((a,b)=>b.sum-a.sum);
-    const top5=items.slice(0,5);
-    const maxSum=items[0].sum;
+    const top5=items.slice(0,5),maxSum=items[0].sum;
     const donutColors=COLORS.slice(0,top5.length);
     let legend=top5.map((it,i)=>`
       <div class="donut-item">
@@ -525,14 +518,20 @@ async function loadMonth(){
         <div class="donut-nm">${esc(it.name)}</div>
         <div class="donut-val">${fv(it.sum)}</div>
       </div>`).join('');
-    let allRows=items.map((it,i)=>{
+    // Top расходов с прогресс-барами
+    let topRows=top5.map((it,i)=>{
       const pct=Math.min(it.sum/maxSum*100,100);
-      const col=donutColors[i]||'var(--blue)';
       return `<div class="prog-i">
         <div class="prog-top"><div class="prog-n">${esc(it.name)}</div><div class="prog-v">${fv(it.sum)}</div></div>
-        <div class="prog-bg"><div class="prog-f" style="width:${pct.toFixed(1)}%;background:${col}"></div></div>
+        <div class="prog-bg"><div class="prog-f" style="width:${pct.toFixed(1)}%;background:${donutColors[i]}"></div></div>
       </div>`;
     }).join('');
+    // Все категории — all items as simple list
+    let allRows=items.map(it=>`
+      <div class="lrow">
+        <div class="lname">${esc(it.name)}</div>
+        <div class="lval rd">${fv(it.sum)}</div>
+      </div>`).join('');
 
     document.getElementById('panel-month').innerHTML=`
       <div class="sg c2">
@@ -547,6 +546,8 @@ async function loadMonth(){
         </div>
       </div>
       <div class="sec">Топ расходов</div>
+      <div class="card">${topRows}</div>
+      <div class="sec">Все категории</div>
       <div class="card">${allRows}</div>`;
 
     setTimeout(()=>{
@@ -556,7 +557,9 @@ async function loadMonth(){
   }catch(e){showErr('month','Ошибка: '+e.message);}
 }
 
-// ─────────────── КАССА ───────────────
+// ═══════════════════════════════════════
+// КАССА
+// ═══════════════════════════════════════
 async function loadKassa(){
   spin('kassa');
   try{
@@ -564,25 +567,36 @@ async function loadKassa(){
     const{rStart,rEnd,cDate,cOpen,cIncome,cExpense,cBalance}=CFG.KASSA;
     const data=[];
     for(let r=rStart;r<=Math.min(rEnd,rows.length-1);r++){
-      const date=(rows[r]||[])[cDate];
-      if(!date&&date!==0)continue;
+      const date=(rows[r]||[])[cDate];if(!date&&date!==0)continue;
       const ds=normDate(date);
-      // Skip if date cell is not a real date (header/total rows)
+      // Skip rows where date doesn't parse to a real date (headers, итого)
       if(!ds||ds.length<8)continue;
-      const open=pf((rows[r]||[])[cOpen]);
-      const income=pf((rows[r]||[])[cIncome]);
-      const expense=pf((rows[r]||[])[cExpense]);
-      const balance=pf((rows[r]||[])[cBalance]);
-      data.push({date:ds,open,income,expense,balance});
+      data.push({
+        date:ds,
+        open:pf((rows[r]||[])[cOpen]),
+        income:pf((rows[r]||[])[cIncome]),
+        expense:pf((rows[r]||[])[cExpense]),
+        balance:pf((rows[r]||[])[cBalance]),
+      });
     }
     if(!data.length){document.getElementById('panel-kassa').innerHTML='<div class="empty">Нет данных кассы</div>';return;}
-    const last=data[data.length-1];
-    const labels=data.map(r=>r.date.slice(0,5));
-    const incArr=data.map(r=>r.income);
-    const expArr=data.map(r=>r.expense);
-    const balArr=data.map(r=>r.balance);
 
-    let rhtml=data.map(r=>`
+    // "Доход посл." = last row that has income > 0
+    const lastWithIncome=data.filter(d=>d.income>0);
+    const lastInc=lastWithIncome.length?lastWithIncome[lastWithIncome.length-1]:{income:0,date:'—'};
+    // "Остаток" = last row with balance > 0 (or just last row)
+    const lastWithBal=data.filter(d=>d.balance>0);
+    const lastBal=lastWithBal.length?lastWithBal[lastWithBal.length-1]:data[data.length-1];
+
+    // Only show rows up to the last filled row (has any non-zero value)
+    const filledData=data.filter(d=>d.income>0||d.expense>0||d.balance>0||d.open>0);
+
+    const labels=filledData.map(r=>r.date.slice(0,5));
+    const incArr=filledData.map(r=>r.income);
+    const expArr=filledData.map(r=>r.expense);
+    const balArr=filledData.map(r=>r.balance);
+
+    let rhtml=filledData.map(r=>`
       <div class="tbl-r gc5">
         <span style="color:var(--t3);font-size:12px">${r.date.slice(0,5)}</span>
         <span style="color:var(--blue)">${r.open>0?fv(r.open):'—'}</span>
@@ -593,8 +607,8 @@ async function loadKassa(){
 
     document.getElementById('panel-kassa').innerHTML=`
       <div class="sg c2">
-        <div class="stat"><div class="stat-l">Остаток</div><div class="stat-v bl">${fv(last.balance)}</div><div class="stat-s">${last.date.slice(0,5)}</div></div>
-        <div class="stat"><div class="stat-l">Доход посл.</div><div class="stat-v gr">${fv(last.income)}</div><div class="stat-s">${last.date.slice(0,5)}</div></div>
+        <div class="stat"><div class="stat-l">Остаток</div><div class="stat-v bl">${fv(lastBal.balance)}</div><div class="stat-s">${lastBal.date.slice(0,5)}</div></div>
+        <div class="stat"><div class="stat-l">Доход посл.</div><div class="stat-v gr">${fv(lastInc.income)}</div><div class="stat-s">${lastInc.date!=='—'?lastInc.date.slice(0,5):'—'}</div></div>
       </div>
       <div class="sec">Баланс кассы</div>
       <div class="card"><div class="ch-wrap"><canvas id="kBal" style="max-height:140px"></canvas></div></div>
@@ -614,7 +628,9 @@ async function loadKassa(){
   }catch(e){showErr('kassa','Ошибка: '+e.message);}
 }
 
-// ─────────────── ИНКАСС ───────────────
+// ═══════════════════════════════════════
+// ИНКАССАЦИИ
+// ═══════════════════════════════════════
 async function loadInkass(){
   spin('inkass');
   try{
@@ -622,48 +638,38 @@ async function loadInkass(){
     const{rStart,rEnd,cDate,cSum,cReason,cTotal}=CFG.INKASS;
     const data=[];
     for(let r=rStart;r<=Math.min(rEnd,rows.length-1);r++){
-      const date=(rows[r]||[])[cDate];
-      if(!date&&date!==0)continue;
-      const ds=normDate(date);
-      if(!ds||ds.length<8)continue;
-      const sum=pf((rows[r]||[])[cSum]);
-      const reason=String((rows[r]||[])[cReason]||'').trim();
-      const total=pf((rows[r]||[])[cTotal]);
-      data.push({date:ds,sum,reason,total});
+      const date=(rows[r]||[])[cDate];if(!date&&date!==0)continue;
+      const ds=normDate(date);if(!ds||ds.length<8)continue;
+      data.push({date:ds,sum:pf((rows[r]||[])[cSum]),reason:String((rows[r]||[])[cReason]||'').trim(),total:pf((rows[r]||[])[cTotal])});
     }
-
-    // Salary from SALARY block — only cCash column (к выдаче нал)
-    const{rStart:sr,rEnd:se,cName:sn,cCash,cCard,cSalary}=CFG.SALARY;
-    let totalSalaryMonth=0;
+    // Salary ФОТ = sum of salary col (before deductions)
+    const{rStart:sr,rEnd:se,cName:sn,cSalary,cTotalDeduct}=CFG.SALARY;
+    let totalFOT=0;
     for(let r=sr;r<=Math.min(se,rows.length-1);r++){
       const name=String((rows[r]||[])[sn]||'').trim();
       if(!name||name.toLowerCase().includes('итого')||name.toLowerCase().includes('сотрудник'))continue;
-      // ФОТ = salary column (before deductions)
-      totalSalaryMonth+=pf((rows[r]||[])[cSalary]);
+      totalFOT+=pf((rows[r]||[])[cSalary]);
     }
-
     const now=new Date(),dIM=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(),dom=now.getDate();
-    const salToday=totalSalaryMonth>0?(totalSalaryMonth/dIM*dom):0;
-    // Last real total (last row with total > 0)
+    const salToday=totalFOT>0?(totalFOT/dIM*dom):0;
+    const inkEntries=data.filter(d=>d.sum>0);
+    const totalCollected=inkEntries.reduce((s,d)=>s+d.sum,0);
+    // Last non-zero total
     const lastWithTotal=data.filter(d=>d.total>0);
-    const lastTotal=lastWithTotal.length>0?lastWithTotal[lastWithTotal.length-1].total:0;
-    const inkassEntries=data.filter(d=>d.sum>0);
-    const totalCollected=inkassEntries.reduce((s,d)=>s+d.sum,0);
-    const opsCount=inkassEntries.length;
+    const lastTotal=lastWithTotal.length?lastWithTotal[lastWithTotal.length-1].total:0;
     const salBalance=lastTotal-salToday;
     const salStatusColor=salBalance>=0?'var(--green)':'var(--red)';
     const salStatusText=salBalance>=0?'Опережаем':'Отстаём';
 
-    // Chart: only data up to last real entry
-    const chartData=data.filter(d=>d.total>0||inkassEntries.some(e=>e.date===d.date));
-    // Actually show all days but cap y-axis smartly
-    const labels=data.map(d=>d.date.slice(0,5));
-    const totals=data.map(d=>d.total);
-    const maxTotal=Math.max(...totals.filter(v=>v>0),1);
+    // Chart: only filled data
+    const chartData=data.filter(d=>d.sum>0||d.total>0);
+    const labels=chartData.map(d=>d.date.slice(0,5));
+    const totals=chartData.map(d=>d.total);
+    const maxT=Math.max(...totals.filter(v=>v>0),1);
 
-    // Table rows: only show inkass entries (days with sum > 0)
-    let rhtml=inkassEntries.map(d=>`
-      <div class="ink-tbl-r">
+    // Table: Дата | Сумма | Причина | Итог
+    let rhtml=inkEntries.map(d=>`
+      <div class="tbl-r gc4i">
         <span style="color:var(--t3);font-size:12px">${d.date.slice(0,5)}</span>
         <span style="color:var(--orange);font-weight:600">${fv(d.sum)}</span>
         <span style="color:var(--t4);font-size:12px">${d.reason||'—'}</span>
@@ -676,45 +682,28 @@ async function loadInkass(){
         <div class="stat"><div class="stat-l">ЗП на сегодня</div><div class="stat-v" style="color:${salStatusColor}">${fv(salToday)}</div><div class="stat-s" style="color:${salStatusColor}">${salStatusText} ${fv(Math.abs(salBalance))}</div></div>
       </div>
       <div class="sg c2">
-        <div class="stat"><div class="stat-l">Операций</div><div class="stat-v bl">${opsCount}</div></div>
+        <div class="stat"><div class="stat-l">Операций</div><div class="stat-v bl">${inkEntries.length}</div></div>
         <div class="stat"><div class="stat-l">Собрано</div><div class="stat-v pu">${fv(totalCollected)}</div></div>
       </div>
       <div class="sec">Динамика</div>
       <div class="card"><div class="ch-wrap"><canvas id="iC" style="max-height:140px"></canvas></div></div>
       <div class="sec">История</div>
       <div class="card">
-        ${inkassEntries.length?`<div class="ink-tbl-h"><span>Дата</span><span>Сумма</span><span>Причина</span><span>Накопл.</span></div>${rhtml}`
-        :`<div class="empty" style="padding:24px">Нет инкассаций</div>`}
+        ${inkEntries.length
+          ?`<div class="tbl-h gc4i"><span>Дата</span><span>Сумма</span><span>Причина</span><span>Итог</span></div>${rhtml}`
+          :`<div class="empty" style="padding:24px">Нет инкассаций</div>`}
       </div>`;
 
     setTimeout(()=>{
       const ctx=document.getElementById('iC');
-      if(ctx){
-        if(charts.ink)charts.ink.destroy();
-        charts.ink=new Chart(ctx,{
-          type:'line',
-          data:{labels,datasets:[{data:totals,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,.08)',borderWidth:2,pointRadius:3,fill:true,tension:.4}]},
-          options:{
-            responsive:true,
-            plugins:{legend:{display:false}},
-            scales:{
-              x:{ticks:{color:'#aeaeb2',font:{size:9},maxTicksLimit:8},grid:{color:'rgba(60,60,67,.05)'}},
-              y:{
-                min:0,
-                // suggestedMax adds 10% headroom above actual max
-                suggestedMax:maxTotal*1.1,
-                ticks:{color:'#aeaeb2',font:{size:9},callback:v=>fv(v)},
-                grid:{color:'rgba(60,60,67,.05)'}
-              }
-            }
-          }
-        });
-      }
+      if(ctx){if(charts.ink)charts.ink.destroy();charts.ink=new Chart(ctx,{type:'line',data:{labels,datasets:[{data:totals,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,.08)',borderWidth:2,pointRadius:3,fill:true,tension:.4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#aeaeb2',font:{size:9},maxTicksLimit:8},grid:{color:'rgba(60,60,67,.05)'}},y:{min:0,suggestedMax:maxT*1.1,ticks:{color:'#aeaeb2',font:{size:9},callback:v=>fv(v)},grid:{color:'rgba(60,60,67,.05)'}}}}});}
     },80);
   }catch(e){showErr('inkass','Ошибка: '+e.message);}
 }
 
-// ─────────────── СМЕНЫ ───────────────
+// ═══════════════════════════════════════
+// СМЕНЫ
+// ═══════════════════════════════════════
 async function loadSalary(){
   spin('salary');
   try{
@@ -723,49 +712,46 @@ async function loadSalary(){
     const data=[];
     for(let r=rStart;r<=Math.min(rEnd,rows.length-1);r++){
       const name=String((rows[r]||[])[cName]||'').trim();
-      // Skip header row, empty rows, итого row
       if(!name||name.toLowerCase().includes('итого')||name.toLowerCase().includes('сотрудник'))continue;
       const salary=pf((rows[r]||[])[cSalary]);
-      const deduct=pf((rows[r]||[])[cDeduct]);
-      const absent=pf((rows[r]||[])[cAbsent]);
       const totalDeduct=pf((rows[r]||[])[cTotalDeduct]);
+      const absent=pf((rows[r]||[])[cAbsent]);
       const card=pf((rows[r]||[])[cCard]);
       const cash=pf((rows[r]||[])[cCash]);
-      data.push({name,salary,deduct,absent,totalDeduct,card,cash});
+      data.push({name,salary,totalDeduct,absent,card,cash});
     }
     if(!data.length){document.getElementById('panel-salary').innerHTML='<div class="empty">Нет данных</div>';return;}
 
-    // ФОТ = sum of salary (before deductions)
-    const totalFOT=data.reduce((s,r)=>s+r.salary,0);
+    // ФОТ = sum(salary - totalDeduct) — учитывает вычеты за пропуски
+    const totalFOT=data.reduce((s,r)=>s+(r.salary-r.totalDeduct),0);
     const totalCard=data.reduce((s,r)=>s+r.card,0);
     const totalCash=data.reduce((s,r)=>s+r.cash,0);
-    const WORK_DAYS=22; // reference for progress bar
+    const WORK_DAYS=22;
 
     let shtml=data.map(d=>{
       const pct=Math.min(d.absent/WORK_DAYS*100,100);
-      // Show cash as main number (to pay in hand), card as secondary
+      // Main = cash (to hand), secondary = card
       const hasCash=d.cash>0,hasCard=d.card>0;
-      const mainAmt=hasCash?d.cash:(hasCard?d.card:0);
+      const main=hasCash?d.cash:(hasCard?d.card:0);
       return `<div class="sal-r">
         <div class="sal-left">
           <div class="sal-nm">${esc(d.name)}</div>
-          <div class="sal-det">ЗП: ${fv(d.salary)} · Пропусков: ${d.absent}${d.totalDeduct>0?` · −${fv(d.totalDeduct)}`:''}</div>
+          <div class="sal-det">ЗП: ${fv(d.salary)}${d.totalDeduct>0?` · −${fv(d.totalDeduct)}`:''}${d.absent>0?` · Пропусков: ${d.absent}`:''}</div>
           ${d.absent>0?`<div class="sal-bar"><div class="sal-bar-f" style="width:${pct.toFixed(1)}%"></div></div>`:''}
         </div>
         <div class="sal-right">
-          <div class="sal-cash">${fv(mainAmt)}</div>
-          ${hasCard?`<div class="sal-card">карта: ${fv(d.card)}</div>`:''}
-          ${hasCash&&hasCard?`<div class="sal-card" style="color:var(--t4)">нал: ${fv(d.cash)}</div>`:''}
+          <div class="sal-cash">${fv(main)}</div>
+          ${hasCard?`<div class="sal-card">на карту: ${fv(d.card)}</div>`:''}
         </div>
       </div>`;
     }).join('');
 
     document.getElementById('panel-salary').innerHTML=`
       <div class="sg c2">
-        <div class="stat"><div class="stat-l">ФОТ месяц</div><div class="stat-v bl">${fv(totalFOT)}</div></div>
+        <div class="stat"><div class="stat-l">ФОТ (с вычетами)</div><div class="stat-v bl">${fv(totalFOT)}</div></div>
         <div class="stat"><div class="stat-l">К выдаче нал</div><div class="stat-v or">${fv(totalCash)}</div></div>
       </div>
-      ${totalCard>0?`<div class="sg c2" style="margin-top:-4px"><div class="stat"><div class="stat-l">На карты</div><div class="stat-v pu">${fv(totalCard)}</div></div><div></div></div>`:''}
+      ${totalCard>0?`<div class="stat" style="margin-bottom:12px"><div class="stat-l">На карты</div><div class="stat-v pu">${fv(totalCard)}</div></div>`:''}
       <div class="sec">Сотрудники</div>
       <div class="card">${shtml}</div>`;
   }catch(e){showErr('salary','Ошибка: '+e.message);}
