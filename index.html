@@ -13,7 +13,6 @@
 html{font-size:16px;height:100%;-webkit-text-size-adjust:100%}
 body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Arial,sans-serif;overflow:hidden;background:var(--bg)}
 
-/* ── VARIABLES ── */
 :root{
   --bg:#f2f2f7;--surface:#fff;
   --s2:rgba(118,118,128,.12);--s3:rgba(118,118,128,.07);
@@ -23,59 +22,55 @@ body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF 
   --green:#34c759;--red:#ff3b30;--orange:#ff9500;--purple:#af52de;
   --sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);
   --hh:56px;--bnh:80px;--bbh:52px;
-  --hbg:rgba(242,242,247,.95);--nbg:rgba(248,248,252,.97);
+  /* header bg as separate var — updated by JS on toggle */
+  --hbg-light:rgba(242,242,247,.95);
+  --hbg-dark:rgba(28,28,30,.96);
+  --nbg-light:rgba(248,248,252,.97);
+  --nbg-dark:rgba(28,28,30,.97);
 }
-/* Dark — CSS variables only, no body background override that fights the header */
 body.dark{
   --bg:#1c1c1e;--surface:#2c2c2e;
   --s2:rgba(255,255,255,.1);--s3:rgba(255,255,255,.06);
   --border:rgba(255,255,255,.15);--b2:rgba(255,255,255,.08);
   --text:#f2f2f7;--t2:#ebebf5;--t3:#aeaeb2;--t4:#636366;
   --sh:0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.2);
-  --hbg:rgba(28,28,30,.96);--nbg:rgba(28,28,30,.97);
 }
 
 /* ── SPLASH ── */
 .splash{
-  position:fixed;inset:0;z-index:9000;
-  background:var(--bg);
+  position:fixed;inset:0;z-index:9000;background:var(--bg);
   display:flex;flex-direction:column;align-items:center;
-  justify-content:center; /* logo slightly above center */
-  padding-bottom:120px;   /* pushes logo up */
+  justify-content:center;padding-bottom:160px;
   transition:opacity .4s ease;
 }
-.splash-logo{width:110px;height:110px;display:flex;align-items:center;justify-content:center}
+.splash-logo{width:130px;height:130px;display:flex;align-items:center;justify-content:center}
 .splash-logo img{width:100%;height:100%;object-fit:contain}
 body.dark .splash-logo img{filter:invert(1)}
-.splash-label{
-  position:absolute;bottom:44px;left:0;right:0;
-  text-align:center;font-size:11px;font-weight:700;letter-spacing:3px;
-  color:var(--t4);text-transform:uppercase;
-}
+.splash-label{position:absolute;bottom:44px;left:0;right:0;text-align:center;font-size:11px;font-weight:700;letter-spacing:3px;color:var(--t4);text-transform:uppercase}
 .splash.hide{opacity:0;pointer-events:none}
 
-/* ── HEADER ── header uses CSS var --hbg so it auto-switches ── */
+/* ── HEADER — background set via JS inline style for instant dark/light switch ── */
 .header{
   position:fixed;top:0;left:0;right:0;z-index:300;
   height:var(--hh);
-  background:var(--hbg);           /* ← picks up dark/light from CSS var */
+  /* background set by JS */
   backdrop-filter:saturate(180%) blur(20px);
   -webkit-backdrop-filter:saturate(180%) blur(20px);
   border-bottom:1px solid var(--border);
   display:none;align-items:center;justify-content:space-between;padding:0 16px;
+  transition:background .25s,border-color .25s;
 }
 .header.show{display:flex}
 .hlogo{width:34px;height:34px;display:flex;align-items:center;justify-content:center}
 .hlogo img{width:30px;height:30px;object-fit:contain}
-body.dark .hlogo img{filter:invert(1)}
 .hright{display:flex;align-items:center;gap:8px}
 .month-pill{display:flex;align-items:center;gap:5px;background:var(--bl);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:15px;font-weight:600;color:var(--blue);border:none;font-family:inherit}
 .month-pill:active{opacity:.6}
 .chevron{display:inline-block;width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-3px}
-.dark-btn{width:36px;height:36px;border-radius:50%;background:var(--s2);border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.dark-btn{width:36px;height:36px;border-radius:50%;background:var(--s2);border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s}
 
 /* ── SCROLL ── */
-.scroll{position:fixed;top:var(--hh);left:0;right:0;bottom:var(--bnh);overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:var(--bg);display:none}
+.scroll{position:fixed;top:var(--hh);left:0;right:0;bottom:var(--bnh);overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:var(--bg);display:none;transition:background .25s}
 .scroll.show{display:block}
 .scroll::-webkit-scrollbar{display:none}
 .scroll.with-daybar{bottom:calc(var(--bnh) + var(--bbh))}
@@ -84,7 +79,7 @@ body.dark .hlogo img{filter:invert(1)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── BOTTOM NAV ── */
-.bnav{position:fixed;bottom:0;left:0;right:0;z-index:300;height:var(--bnh);background:var(--nbg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border);display:none;align-items:flex-start;padding-top:10px;padding-bottom:env(safe-area-inset-bottom,10px)}
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:300;height:var(--bnh);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border);display:none;align-items:flex-start;padding-top:10px;padding-bottom:env(safe-area-inset-bottom,10px);transition:background .25s,border-color .25s}
 .bnav.show{display:flex}
 .bnav-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--t4);font-size:10px;font-weight:600;border:none;background:none;font-family:inherit;padding:0;transition:color .18s}
 .bnav-tab svg{width:26px;height:26px;transition:transform .18s}
@@ -92,7 +87,7 @@ body.dark .hlogo img{filter:invert(1)}
 .bnav-tab.active svg{transform:scale(1.1)}
 
 /* ── DAY BAR ── */
-.daybar{position:fixed;left:0;right:0;z-index:299;height:var(--bbh);background:var(--nbg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border);display:none;align-items:center;padding:0 16px;gap:10px;bottom:var(--bnh)}
+.daybar{position:fixed;left:0;right:0;z-index:299;height:var(--bbh);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border);display:none;align-items:center;padding:0 16px;gap:10px;bottom:var(--bnh);transition:background .25s,border-color .25s}
 .daybar.show{display:flex}
 .nav-btn{width:40px;height:40px;border-radius:50%;background:var(--s2);border:none;color:var(--t2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit}
 .nav-btn:active{opacity:.5}
@@ -105,7 +100,7 @@ body.dark .hlogo img{filter:invert(1)}
 .sec{font-size:12px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:16px 4px 8px}
 .sec:first-child{padding-top:4px}
 .sg{display:grid;gap:10px;margin-bottom:12px}
-.c2{grid-template-columns:1fr 1fr}.c4{grid-template-columns:1fr 1fr 1fr 1fr}
+.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}.c4{grid-template-columns:1fr 1fr 1fr 1fr}
 .stat{background:var(--surface);border-radius:14px;padding:14px 12px;box-shadow:var(--sh)}
 .stat-l{font-size:10px;color:var(--t3);font-weight:600;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stat-v{font-size:22px;font-weight:700;letter-spacing:-.5px;line-height:1}
@@ -195,13 +190,17 @@ const DOW=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
 const SKIP=['loocker_data','Сводка','сводка','Шаблон','Template','app_settings'];
 const COLORS=['#007aff','#ff3b30','#34c759','#ff9500','#af52de','#00c7be','#ff6b35','#5856d6'];
 
-// CFG — 0-based row indices. ИТОГО rows are skipped by date-validity check.
+// New table layout (Июнь 2026, verified from screenshot):
+// KASSA:   rows 182-212 (0-indexed 181-211), cols A=date,B=open,C=income,D=expense,E=balance
+// INKASS:  rows 217-246 (0-indexed 216-245), cols A=date,B=sum,C=expense,D=reason,E=total
+// SALARY:  rows 251-265 (0-indexed 250-264), cols A=name,B=salary,C=deduct,D=absent,E=totalDeduct,F=card,G=cash
+// EXPENSES:rows 269-299 (0-indexed 268-298), cols A=name,B=sum
 const CFG={
-  KASSA:  {rStart:180,rEnd:211,cDate:0,cOpen:1,cIncome:2,cExpense:3,cBalance:4},
-  INKASS: {rStart:215,rEnd:245,cDate:0,cSum:1,cReason:2,cTotal:3},
+  KASSA:  {rStart:181,rEnd:211,cDate:0,cOpen:1,cIncome:2,cExpense:3,cBalance:4},
+  INKASS: {rStart:216,rEnd:245,cDate:0,cSum:1,cExpense:2,cReason:3,cTotal:4},
   SALARY: {rStart:250,rEnd:264,cName:0,cSalary:1,cDeduct:2,cAbsent:3,cTotalDeduct:4,cCard:5,cCash:6},
   EXPENSES:{rStart:268,rEnd:298,cName:0,cSum:1},
-  EMP_ROW_START:2,EMP_COUNT:15,OTHER_ROW_START:18,TOTAL_ROW_OFFSET:32,
+  EMP_ROW_START:2,EMP_COUNT:20,OTHER_ROW_START:20,TOTAL_ROW_OFFSET:33,
 };
 </script>
 
@@ -286,25 +285,39 @@ function applyLogos(){
 }
 
 // ── DARK MODE ──
-// Key insight: we only toggle a class on <body>.
-// All colors (including header) come from CSS variables that auto-update.
-// No JS inline style overrides on the header — pure CSS var solution.
+// FIX: set background directly via JS inline style — bypasses backdrop-filter stacking context issue
+function applyThemeStyles(){
+  const dark=document.body.classList.contains('dark');
+  const hbg=dark?'rgba(28,28,30,.96)':'rgba(242,242,247,.95)';
+  const nbg=dark?'rgba(28,28,30,.97)':'rgba(248,248,252,.97)';
+  const hdr=document.getElementById('hdr');
+  const bnav=document.getElementById('bnav');
+  const daybar=document.getElementById('daybar');
+  if(hdr)hdr.style.background=hbg;
+  if(bnav)bnav.style.background=nbg;
+  if(daybar)daybar.style.background=nbg;
+}
+
 function toggleDark(){
   document.body.classList.toggle('dark');
   const isDark=document.body.classList.contains('dark');
   try{localStorage.setItem('so_ana_dark',isDark?'1':'0');}catch(e){}
   document.getElementById('darkBtn').textContent=isDark?'☀️':'🌙';
   applyLogos();
+  applyThemeStyles(); // instant update
 }
+
 (function initTheme(){
   try{if(localStorage.getItem('so_ana_dark')==='1')document.body.classList.add('dark');}catch(e){}
   applyLogos();
+  applyThemeStyles();
   document.getElementById('darkBtn').textContent=document.body.classList.contains('dark')?'☀️':'🌙';
 })();
 
 // ── SPLASH ──
 window.addEventListener('load',()=>{
   applyLogos();
+  applyThemeStyles();
   setTimeout(()=>{
     const sp=document.getElementById('splash');
     sp.classList.add('hide');
@@ -313,6 +326,7 @@ window.addEventListener('load',()=>{
       document.getElementById('hdr').classList.add('show');
       document.getElementById('scrollArea').classList.add('show');
       document.getElementById('bnav').classList.add('show');
+      applyThemeStyles();
       loadSheets();
     },400);
   },900);
@@ -377,9 +391,9 @@ function loadTab(t){
   else if(t==='kassa')loadKassa();else if(t==='inkass')loadInkass();else if(t==='salary')loadSalary();
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // ДЕНЬ
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 function updateDayBar(){
   const d=curDay,dIM=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
   document.getElementById('dayMain').textContent=fmt(d);
@@ -404,9 +418,9 @@ async function loadDay(){
     if(!block){document.getElementById('panel-day').innerHTML=`<div class="empty">Нет данных за ${fmt(curDay)}</div>`;return;}
     const{blockRow:br,blockCol:bc}=block;
 
-    // Employees
+    // Employees — scan rows until "итого" or empty name
     const emps=[];
-    for(let dr=br+CFG.EMP_ROW_START;dr<br+CFG.EMP_ROW_START+CFG.EMP_COUNT+3&&dr<rows.length;dr++){
+    for(let dr=br+CFG.EMP_ROW_START;dr<br+CFG.EMP_ROW_START+CFG.EMP_COUNT+5&&dr<rows.length;dr++){
       const name=String((rows[dr]||[])[bc]||'').trim();
       if(!name||name.toLowerCase().includes('итого'))break;
       const chk=(rows[dr]||[])[bc+2];
@@ -414,11 +428,12 @@ async function loadDay(){
       emps.push({name,absent});
     }
 
-    // Other expenses — only if sum > 0
+    // All expense rows in day block (includes employees with sums AND other expenses)
+    // We scan from row after header (+1) through TOTAL_ROW_OFFSET
     const others=[];
-    for(let dr=br+CFG.OTHER_ROW_START;dr<br+CFG.TOTAL_ROW_OFFSET&&dr<rows.length;dr++){
+    for(let dr=br+1;dr<br+CFG.TOTAL_ROW_OFFSET&&dr<rows.length;dr++){
       const name=String((rows[dr]||[])[bc]||'').trim();
-      if(!name||name.toLowerCase().includes('итого'))continue;
+      if(!name||name.toLowerCase().includes('итого')||name.toLowerCase().includes('наименование'))continue;
       const sum=pf((rows[dr]||[])[bc+1]);
       if(sum>0)others.push({name,sum});
     }
@@ -431,13 +446,18 @@ async function loadDay(){
       if(normDate(date)===fmt(curDay)){kassaOpen=pf((rows[r]||[])[ko]);kassaIncome=pf((rows[r]||[])[ki]);kassaExpense=pf((rows[r]||[])[kx]);kassaBalance=pf((rows[r]||[])[kb]);break;}
     }
 
-    // Инкассация for this day — columns: date, sum, reason, running_total
-    // (no separate expense column in table — only sum + reason)
-    let inkSum=0,inkReason='',inkTotal=0;
-    const{rStart:is2,rEnd:ie2,cDate:id2,cSum:isum,cReason:irs,cTotal:itot}=CFG.INKASS;
+    // Инкассация for this day — cols: date, sum, expense, reason, total
+    let inkSum=0,inkExpense=0,inkReason='',inkTotal=0;
+    const{rStart:is2,rEnd:ie2,cDate:id2,cSum:isum,cExpense:iexp,cReason:irs,cTotal:itot}=CFG.INKASS;
     for(let r=is2;r<=Math.min(ie2,rows.length-1);r++){
       const date=(rows[r]||[])[id2];if(!date&&date!==0)continue;
-      if(normDate(date)===fmt(curDay)){inkSum=pf((rows[r]||[])[isum]);inkReason=String((rows[r]||[])[irs]||'').trim();inkTotal=pf((rows[r]||[])[itot]);break;}
+      if(normDate(date)===fmt(curDay)){
+        inkSum=pf((rows[r]||[])[isum]);
+        inkExpense=pf((rows[r]||[])[iexp]);
+        inkReason=String((rows[r]||[])[irs]||'').trim();
+        inkTotal=pf((rows[r]||[])[itot]);
+        break;
+      }
     }
 
     const present=emps.filter(e=>!e.absent);
@@ -456,37 +476,33 @@ async function loadDay(){
       <div class="stat"><div class="stat-l">Касса</div><div class="stat-v sm bl">${fv(kassaBalance)}</div></div>
     </div>`;
 
-    // Расходы
     html+=`<div class="sec">Расходы</div><div class="card">`;
-    if(others.length){
-      others.forEach(o=>{html+=`<div class="lrow"><div class="lname">${esc(o.name)}</div><div class="lval rd">−${fv(o.sum)}</div></div>`;});
-    }else{html+=`<div class="empty" style="padding:24px">Нет расходов</div>`;}
+    if(others.length){others.forEach(o=>{html+=`<div class="lrow"><div class="lname">${esc(o.name)}</div><div class="lval rd">−${fv(o.sum)}</div></div>`;});}
+    else{html+=`<div class="empty" style="padding:24px">Нет расходов</div>`;}
     html+=`</div>`;
 
-    // Инкассация block — 4 sections: приход, расход(из кассы), причина, итог
+    // Инкассация — 4 sections from inkass block columns
     html+=`<div class="sec">Инкассация</div><div class="card" style="padding:14px 16px">`;
     html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><div style="font-size:18px">💰</div><div style="font-size:15px;font-weight:600;color:var(--text)">${fmt(curDay)}</div></div>`;
     html+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:var(--b2);border-radius:10px;overflow:hidden">`;
-    html+=`<div style="background:var(--surface);padding:10px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Приход</div><div style="font-size:15px;font-weight:700;color:var(--green)">${inkSum>0?fv(inkSum):'—'}</div></div>`;
-    html+=`<div style="background:var(--surface);padding:10px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Расход</div><div style="font-size:15px;font-weight:700;color:var(--red)">${kassaExpense>0?fv(kassaExpense):'—'}</div></div>`;
-    html+=`<div style="background:var(--surface);padding:10px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Причина</div><div style="font-size:12px;color:var(--t2);line-height:1.3">${inkReason||'—'}</div></div>`;
-    html+=`<div style="background:var(--surface);padding:10px 10px"><div style="font-size:10px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Итог</div><div style="font-size:15px;font-weight:700;color:var(--orange)">${fv(inkTotal)}</div></div>`;
+    html+=`<div style="background:var(--surface);padding:10px 8px"><div style="font-size:9px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Приход</div><div style="font-size:15px;font-weight:700;color:var(--green)">${inkSum>0?fv(inkSum):'—'}</div></div>`;
+    html+=`<div style="background:var(--surface);padding:10px 8px"><div style="font-size:9px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Расход</div><div style="font-size:15px;font-weight:700;color:var(--red)">${inkExpense>0?fv(inkExpense):'—'}</div></div>`;
+    html+=`<div style="background:var(--surface);padding:10px 8px"><div style="font-size:9px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Причина</div><div style="font-size:12px;color:var(--t2);line-height:1.3">${inkReason||'—'}</div></div>`;
+    html+=`<div style="background:var(--surface);padding:10px 8px"><div style="font-size:9px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">Итог</div><div style="font-size:15px;font-weight:700;color:var(--orange)">${fv(inkTotal)}</div></div>`;
     html+=`</div></div>`;
 
-    // Absent
     if(absent.length){
       html+=`<div class="sec">Отсутствуют (${absent.length})</div><div class="card">`;
       absent.forEach(e=>{html+=`<div class="lrow"><div class="lname" style="color:var(--t3)">${esc(e.name)}</div><div style="font-size:13px;color:var(--red)">✗</div></div>`;});
       html+=`</div>`;
     }
-
     document.getElementById('panel-day').innerHTML=html;
   }catch(e){showErr('day','Ошибка: '+e.message);}
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // МЕСЯЦ
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 async function loadMonth(){
   spin('month');
   try{
@@ -499,7 +515,6 @@ async function loadMonth(){
       const sum=pf((rows[r]||[])[cSum]);
       if(sum>0){items.push({name,sum});total+=sum;}
     }
-    // Income — sum cIncome from KASSA, valid date rows only
     const{rStart:ks,rEnd:ke,cDate:kd,cIncome:ki}=CFG.KASSA;
     let totalIncome=0;
     for(let r=ks;r<=Math.min(ke,rows.length-1);r++){
@@ -507,49 +522,29 @@ async function loadMonth(){
       const ds=normDate(date);if(!ds||ds.length<8)continue;
       totalIncome+=pf((rows[r]||[])[ki]);
     }
-
     if(!items.length){document.getElementById('panel-month').innerHTML=`<div class="empty">Нет данных за ${curMonth}</div>`;return;}
     items.sort((a,b)=>b.sum-a.sum);
     const top5=items.slice(0,5),maxSum=items[0].sum;
     const donutColors=COLORS.slice(0,top5.length);
     let legend=top5.map((it,i)=>`
-      <div class="donut-item">
-        <div class="donut-dot" style="background:${donutColors[i]}"></div>
-        <div class="donut-nm">${esc(it.name)}</div>
-        <div class="donut-val">${fv(it.sum)}</div>
-      </div>`).join('');
-    // Top расходов с прогресс-барами
+      <div class="donut-item"><div class="donut-dot" style="background:${donutColors[i]}"></div><div class="donut-nm">${esc(it.name)}</div><div class="donut-val">${fv(it.sum)}</div></div>`).join('');
     let topRows=top5.map((it,i)=>{
       const pct=Math.min(it.sum/maxSum*100,100);
-      return `<div class="prog-i">
-        <div class="prog-top"><div class="prog-n">${esc(it.name)}</div><div class="prog-v">${fv(it.sum)}</div></div>
-        <div class="prog-bg"><div class="prog-f" style="width:${pct.toFixed(1)}%;background:${donutColors[i]}"></div></div>
-      </div>`;
+      return `<div class="prog-i"><div class="prog-top"><div class="prog-n">${esc(it.name)}</div><div class="prog-v">${fv(it.sum)}</div></div><div class="prog-bg"><div class="prog-f" style="width:${pct.toFixed(1)}%;background:${donutColors[i]}"></div></div></div>`;
     }).join('');
-    // Все категории — all items as simple list
-    let allRows=items.map(it=>`
-      <div class="lrow">
-        <div class="lname">${esc(it.name)}</div>
-        <div class="lval rd">${fv(it.sum)}</div>
-      </div>`).join('');
+    let allRows=items.map(it=>`<div class="lrow"><div class="lname">${esc(it.name)}</div><div class="lval rd">${fv(it.sum)}</div></div>`).join('');
 
     document.getElementById('panel-month').innerHTML=`
       <div class="sg c2">
-        <div class="stat"><div class="stat-l">Итого за месяц</div><div class="stat-v rd">${fv(total)}</div><div class="stat-s">${curMonth}</div></div>
-        <div class="stat"><div class="stat-l">Доход</div><div class="stat-v gr">${fv(totalIncome)}</div><div class="stat-s">${curMonth}</div></div>
+        <div class="stat"><div class="stat-l">Итого за месяц</div><div class="stat-v rd">${fv(total)}</div></div>
+        <div class="stat"><div class="stat-l">Доход</div><div class="stat-v gr">${fv(totalIncome)}</div></div>
       </div>
       <div class="sec">Структура</div>
-      <div class="card">
-        <div class="donut-wrap">
-          <canvas id="donutC" width="120" height="120"></canvas>
-          <div class="donut-legend">${legend}</div>
-        </div>
-      </div>
+      <div class="card"><div class="donut-wrap"><canvas id="donutC" width="120" height="120"></canvas><div class="donut-legend">${legend}</div></div></div>
       <div class="sec">Топ расходов</div>
       <div class="card">${topRows}</div>
       <div class="sec">Все категории</div>
       <div class="card">${allRows}</div>`;
-
     setTimeout(()=>{
       const ctx=document.getElementById('donutC');
       if(ctx){if(charts.donut)charts.donut.destroy();charts.donut=new Chart(ctx,{type:'doughnut',data:{labels:top5.map(i=>i.name),datasets:[{data:top5.map(i=>i.sum),backgroundColor:donutColors,borderWidth:0,hoverOffset:4}]},options:{responsive:false,cutout:'68%',plugins:{legend:{display:false}}}});}
@@ -557,9 +552,9 @@ async function loadMonth(){
   }catch(e){showErr('month','Ошибка: '+e.message);}
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // КАССА
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 async function loadKassa(){
   spin('kassa');
   try{
@@ -568,35 +563,23 @@ async function loadKassa(){
     const data=[];
     for(let r=rStart;r<=Math.min(rEnd,rows.length-1);r++){
       const date=(rows[r]||[])[cDate];if(!date&&date!==0)continue;
-      const ds=normDate(date);
-      // Skip rows where date doesn't parse to a real date (headers, итого)
-      if(!ds||ds.length<8)continue;
-      data.push({
-        date:ds,
-        open:pf((rows[r]||[])[cOpen]),
-        income:pf((rows[r]||[])[cIncome]),
-        expense:pf((rows[r]||[])[cExpense]),
-        balance:pf((rows[r]||[])[cBalance]),
-      });
+      const ds=normDate(date);if(!ds||ds.length<8)continue;
+      data.push({date:ds,open:pf((rows[r]||[])[cOpen]),income:pf((rows[r]||[])[cIncome]),expense:pf((rows[r]||[])[cExpense]),balance:pf((rows[r]||[])[cBalance])});
     }
     if(!data.length){document.getElementById('panel-kassa').innerHTML='<div class="empty">Нет данных кассы</div>';return;}
 
-    // "Доход посл." = last row that has income > 0
-    const lastWithIncome=data.filter(d=>d.income>0);
-    const lastInc=lastWithIncome.length?lastWithIncome[lastWithIncome.length-1]:{income:0,date:'—'};
-    // "Остаток" = last row with balance > 0 (or just last row)
-    const lastWithBal=data.filter(d=>d.balance>0);
-    const lastBal=lastWithBal.length?lastWithBal[lastWithBal.length-1]:data[data.length-1];
+    // Last with income > 0
+    const lastInc=[...data].reverse().find(d=>d.income>0)||{income:0,date:''};
+    // Last with balance > 0
+    const lastBal=[...data].reverse().find(d=>d.balance>0)||data[data.length-1];
+    // Only show filled rows
+    const filled=data.filter(d=>d.income>0||d.expense>0||d.open>0||d.balance>0);
+    const labels=filled.map(r=>r.date.slice(0,5));
+    const balArr=filled.map(r=>r.balance);
+    const incArr=filled.map(r=>r.income);
+    const expArr=filled.map(r=>r.expense);
 
-    // Only show rows up to the last filled row (has any non-zero value)
-    const filledData=data.filter(d=>d.income>0||d.expense>0||d.balance>0||d.open>0);
-
-    const labels=filledData.map(r=>r.date.slice(0,5));
-    const incArr=filledData.map(r=>r.income);
-    const expArr=filledData.map(r=>r.expense);
-    const balArr=filledData.map(r=>r.balance);
-
-    let rhtml=filledData.map(r=>`
+    let rhtml=filled.map(r=>`
       <div class="tbl-r gc5">
         <span style="color:var(--t3);font-size:12px">${r.date.slice(0,5)}</span>
         <span style="color:var(--blue)">${r.open>0?fv(r.open):'—'}</span>
@@ -607,8 +590,8 @@ async function loadKassa(){
 
     document.getElementById('panel-kassa').innerHTML=`
       <div class="sg c2">
-        <div class="stat"><div class="stat-l">Остаток</div><div class="stat-v bl">${fv(lastBal.balance)}</div><div class="stat-s">${lastBal.date.slice(0,5)}</div></div>
-        <div class="stat"><div class="stat-l">Доход посл.</div><div class="stat-v gr">${fv(lastInc.income)}</div><div class="stat-s">${lastInc.date!=='—'?lastInc.date.slice(0,5):'—'}</div></div>
+        <div class="stat"><div class="stat-l">Остаток</div><div class="stat-v bl">${fv(lastBal.balance)}</div></div>
+        <div class="stat"><div class="stat-l">Доход посл.</div><div class="stat-v gr">${fv(lastInc.income)}</div><div class="stat-s">${lastInc.date?lastInc.date.slice(0,5):'—'}</div></div>
       </div>
       <div class="sec">Баланс кассы</div>
       <div class="card"><div class="ch-wrap"><canvas id="kBal" style="max-height:140px"></canvas></div></div>
@@ -616,58 +599,58 @@ async function loadKassa(){
       <div class="card"><div class="ch-wrap"><canvas id="kBar" style="max-height:130px"></canvas></div></div>
       <div class="sec">По дням</div>
       <div class="card">
-        <div class="tbl-h gc5"><span>Дата</span><span>Вход</span><span>Доход</span><span>Расход</span><span>Касса</span></div>
-        ${rhtml}
+        <div class="tbl-h gc5"><span>Дата</span><span>Вход</span><span>Доход</span><span>Расход</span><span>Касса</span></div>${rhtml}
       </div>`;
     setTimeout(()=>{
       const c1=document.getElementById('kBal');
-      if(c1){if(charts.kBal)charts.kBal.destroy();charts.kBal=new Chart(c1,{type:'line',data:{labels,datasets:[{data:balArr,borderColor:'#007aff',backgroundColor:'rgba(0,122,255,.07)',borderWidth:2,pointRadius:2,fill:true,tension:.4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#aeaeb2',font:{size:9},maxTicksLimit:8},grid:{color:'rgba(60,60,67,.05)'}},y:{ticks:{color:'#aeaeb2',font:{size:9},callback:v=>fv(v)},grid:{color:'rgba(60,60,67,.05)'}}}}});}
+      if(c1){if(charts.kBal)charts.kBal.destroy();charts.kBal=new Chart(c1,{type:'line',data:{labels,datasets:[{data:balArr,borderColor:'#007aff',backgroundColor:'rgba(0,122,255,.07)',borderWidth:2,pointRadius:2,fill:true,tension:.4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#aeaeb2',font:{size:9},maxTicksLimit:8},grid:{color:'rgba(60,60,67,.05)'}},y:{ticks:{color:'#aeaeb2',font:{size:9},callback:v=>'€'+Math.round(v)},grid:{color:'rgba(60,60,67,.05)'}}}}});}
       const c2=document.getElementById('kBar');
-      if(c2){if(charts.kBar)charts.kBar.destroy();charts.kBar=new Chart(c2,{type:'bar',data:{labels,datasets:[{label:'Доход',data:incArr,backgroundColor:'rgba(52,199,89,.7)',borderRadius:4},{label:'Расход',data:expArr,backgroundColor:'rgba(255,59,48,.65)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{labels:{color:'#6d6d72',font:{size:11},boxWidth:10}}},scales:{x:{ticks:{color:'#aeaeb2',font:{size:9},maxTicksLimit:8},grid:{display:false}},y:{ticks:{color:'#aeaeb2',font:{size:9},callback:v=>fv(v)},grid:{color:'rgba(60,60,67,.05)'}}}}});}
+      if(c2){if(charts.kBar)charts.kBar.destroy();charts.kBar=new Chart(c2,{type:'bar',data:{labels,datasets:[{label:'Доход',data:incArr,backgroundColor:'rgba(52,199,89,.7)',borderRadius:4},{label:'Расход',data:expArr,backgroundColor:'rgba(255,59,48,.65)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{labels:{color:'#6d6d72',font:{size:11},boxWidth:10}}},scales:{x:{ticks:{color:'#aeaeb2',font:{size:9},maxTicksLimit:8},grid:{display:false}},y:{ticks:{color:'#aeaeb2',font:{size:9},callback:v=>'€'+Math.round(v)},grid:{color:'rgba(60,60,67,.05)'}}}}});}
     },80);
   }catch(e){showErr('kassa','Ошибка: '+e.message);}
 }
 
-// ═══════════════════════════════════════
-// ИНКАССАЦИИ
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
+// ИНКАСС
+// ═══════════════════════════════════
 async function loadInkass(){
   spin('inkass');
   try{
     const rows=await getSheetData(curMonth);
-    const{rStart,rEnd,cDate,cSum,cReason,cTotal}=CFG.INKASS;
+    const{rStart,rEnd,cDate,cSum,cExpense:iExp,cReason,cTotal}=CFG.INKASS;
     const data=[];
     for(let r=rStart;r<=Math.min(rEnd,rows.length-1);r++){
       const date=(rows[r]||[])[cDate];if(!date&&date!==0)continue;
       const ds=normDate(date);if(!ds||ds.length<8)continue;
-      data.push({date:ds,sum:pf((rows[r]||[])[cSum]),reason:String((rows[r]||[])[cReason]||'').trim(),total:pf((rows[r]||[])[cTotal])});
+      data.push({date:ds,sum:pf((rows[r]||[])[cSum]),expense:pf((rows[r]||[])[iExp]),reason:String((rows[r]||[])[cReason]||'').trim(),total:pf((rows[r]||[])[cTotal])});
     }
-    // Salary ФОТ = sum of salary col (before deductions)
-    const{rStart:sr,rEnd:se,cName:sn,cSalary,cTotalDeduct}=CFG.SALARY;
-    let totalFOT=0;
+
+    // "Баланс" = last non-zero total from inkass block
+    const lastWithTotal=[...data].reverse().find(d=>d.total>0);
+    const lastTotal=lastWithTotal?lastWithTotal.total:0;
+
+    // ЗП на сегодня = sum of cCash / days * today (rounded, no kopecks)
+    const{rStart:sr,rEnd:se,cName:sn,cCash}=CFG.SALARY;
+    let totalCashSalary=0;
     for(let r=sr;r<=Math.min(se,rows.length-1);r++){
       const name=String((rows[r]||[])[sn]||'').trim();
       if(!name||name.toLowerCase().includes('итого')||name.toLowerCase().includes('сотрудник'))continue;
-      totalFOT+=pf((rows[r]||[])[cSalary]);
+      totalCashSalary+=pf((rows[r]||[])[cCash]);
     }
     const now=new Date(),dIM=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(),dom=now.getDate();
-    const salToday=totalFOT>0?(totalFOT/dIM*dom):0;
-    const inkEntries=data.filter(d=>d.sum>0);
-    const totalCollected=inkEntries.reduce((s,d)=>s+d.sum,0);
-    // Last non-zero total
-    const lastWithTotal=data.filter(d=>d.total>0);
-    const lastTotal=lastWithTotal.length?lastWithTotal[lastWithTotal.length-1].total:0;
+    const salToday=Math.round(totalCashSalary>0?(totalCashSalary/dIM*dom):0);
     const salBalance=lastTotal-salToday;
     const salStatusColor=salBalance>=0?'var(--green)':'var(--red)';
     const salStatusText=salBalance>=0?'Опережаем':'Отстаём';
 
-    // Chart: only filled data
+    // Chart: only rows up to last filled
     const chartData=data.filter(d=>d.sum>0||d.total>0);
     const labels=chartData.map(d=>d.date.slice(0,5));
     const totals=chartData.map(d=>d.total);
     const maxT=Math.max(...totals.filter(v=>v>0),1);
 
-    // Table: Дата | Сумма | Причина | Итог
+    // Table: only rows with sum > 0
+    const inkEntries=data.filter(d=>d.sum>0);
     let rhtml=inkEntries.map(d=>`
       <div class="tbl-r gc4i">
         <span style="color:var(--t3);font-size:12px">${d.date.slice(0,5)}</span>
@@ -679,11 +662,7 @@ async function loadInkass(){
     document.getElementById('panel-inkass').innerHTML=`
       <div class="sg c2">
         <div class="stat"><div class="stat-l">Баланс</div><div class="stat-v or">${fv(lastTotal)}</div></div>
-        <div class="stat"><div class="stat-l">ЗП на сегодня</div><div class="stat-v" style="color:${salStatusColor}">${fv(salToday)}</div><div class="stat-s" style="color:${salStatusColor}">${salStatusText} ${fv(Math.abs(salBalance))}</div></div>
-      </div>
-      <div class="sg c2">
-        <div class="stat"><div class="stat-l">Операций</div><div class="stat-v bl">${inkEntries.length}</div></div>
-        <div class="stat"><div class="stat-l">Собрано</div><div class="stat-v pu">${fv(totalCollected)}</div></div>
+        <div class="stat"><div class="stat-l">ЗП на сегодня</div><div class="stat-v" style="color:${salStatusColor}">€${salToday.toLocaleString('de-DE')}</div><div class="stat-s" style="color:${salStatusColor}">${salStatusText} €${Math.abs(salBalance).toLocaleString('de-DE')}</div></div>
       </div>
       <div class="sec">Динамика</div>
       <div class="card"><div class="ch-wrap"><canvas id="iC" style="max-height:140px"></canvas></div></div>
@@ -693,17 +672,29 @@ async function loadInkass(){
           ?`<div class="tbl-h gc4i"><span>Дата</span><span>Сумма</span><span>Причина</span><span>Итог</span></div>${rhtml}`
           :`<div class="empty" style="padding:24px">Нет инкассаций</div>`}
       </div>`;
-
     setTimeout(()=>{
       const ctx=document.getElementById('iC');
-      if(ctx){if(charts.ink)charts.ink.destroy();charts.ink=new Chart(ctx,{type:'line',data:{labels,datasets:[{data:totals,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,.08)',borderWidth:2,pointRadius:3,fill:true,tension:.4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#aeaeb2',font:{size:9},maxTicksLimit:8},grid:{color:'rgba(60,60,67,.05)'}},y:{min:0,suggestedMax:maxT*1.1,ticks:{color:'#aeaeb2',font:{size:9},callback:v=>fv(v)},grid:{color:'rgba(60,60,67,.05)'}}}}});}
+      if(ctx){
+        if(charts.ink)charts.ink.destroy();
+        charts.ink=new Chart(ctx,{type:'line',data:{labels,datasets:[{data:totals,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,.08)',borderWidth:2,pointRadius:3,fill:true,tension:.4}]},
+          options:{responsive:true,plugins:{legend:{display:false}},
+            scales:{
+              x:{ticks:{color:'#aeaeb2',font:{size:9},maxTicksLimit:8},grid:{color:'rgba(60,60,67,.05)'}},
+              y:{min:0,suggestedMax:maxT*1.15,
+                ticks:{color:'#aeaeb2',font:{size:9},callback:v=>'€'+Math.round(v)},
+                grid:{color:'rgba(60,60,67,.05)'}
+              }
+            }
+          }
+        });
+      }
     },80);
   }catch(e){showErr('inkass','Ошибка: '+e.message);}
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // СМЕНЫ
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 async function loadSalary(){
   spin('salary');
   try{
@@ -713,16 +704,18 @@ async function loadSalary(){
     for(let r=rStart;r<=Math.min(rEnd,rows.length-1);r++){
       const name=String((rows[r]||[])[cName]||'').trim();
       if(!name||name.toLowerCase().includes('итого')||name.toLowerCase().includes('сотрудник'))continue;
-      const salary=pf((rows[r]||[])[cSalary]);
-      const totalDeduct=pf((rows[r]||[])[cTotalDeduct]);
-      const absent=pf((rows[r]||[])[cAbsent]);
-      const card=pf((rows[r]||[])[cCard]);
-      const cash=pf((rows[r]||[])[cCash]);
-      data.push({name,salary,totalDeduct,absent,card,cash});
+      data.push({
+        name,
+        salary:pf((rows[r]||[])[cSalary]),
+        totalDeduct:pf((rows[r]||[])[cTotalDeduct]),
+        absent:pf((rows[r]||[])[cAbsent]),
+        card:pf((rows[r]||[])[cCard]),
+        cash:pf((rows[r]||[])[cCash]),
+      });
     }
     if(!data.length){document.getElementById('panel-salary').innerHTML='<div class="empty">Нет данных</div>';return;}
 
-    // ФОТ = sum(salary - totalDeduct) — учитывает вычеты за пропуски
+    // ФОТ with deductions (salary - totalDeduct)
     const totalFOT=data.reduce((s,r)=>s+(r.salary-r.totalDeduct),0);
     const totalCard=data.reduce((s,r)=>s+r.card,0);
     const totalCash=data.reduce((s,r)=>s+r.cash,0);
@@ -730,7 +723,6 @@ async function loadSalary(){
 
     let shtml=data.map(d=>{
       const pct=Math.min(d.absent/WORK_DAYS*100,100);
-      // Main = cash (to hand), secondary = card
       const hasCash=d.cash>0,hasCard=d.card>0;
       const main=hasCash?d.cash:(hasCard?d.card:0);
       return `<div class="sal-r">
@@ -746,12 +738,13 @@ async function loadSalary(){
       </div>`;
     }).join('');
 
+    // 3 stat cards in a row
     document.getElementById('panel-salary').innerHTML=`
-      <div class="sg c2">
-        <div class="stat"><div class="stat-l">ФОТ (с вычетами)</div><div class="stat-v bl">${fv(totalFOT)}</div></div>
-        <div class="stat"><div class="stat-l">К выдаче нал</div><div class="stat-v or">${fv(totalCash)}</div></div>
+      <div class="sg c3">
+        <div class="stat"><div class="stat-l">ФОТ</div><div class="stat-v sm bl">${fv(totalFOT)}</div></div>
+        <div class="stat"><div class="stat-l">Нал</div><div class="stat-v sm or">${fv(totalCash)}</div></div>
+        <div class="stat"><div class="stat-l">Карта</div><div class="stat-v sm pu">${fv(totalCard)}</div></div>
       </div>
-      ${totalCard>0?`<div class="stat" style="margin-bottom:12px"><div class="stat-l">На карты</div><div class="stat-v pu">${fv(totalCard)}</div></div>`:''}
       <div class="sec">Сотрудники</div>
       <div class="card">${shtml}</div>`;
   }catch(e){showErr('salary','Ошибка: '+e.message);}
