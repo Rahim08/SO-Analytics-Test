@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="SO Analytics">
 <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;SO Analytics&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;start_url&quot;:&quot;.&quot;}">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="apple-touch-icon" href="https://i.postimg.cc/Dy1qT843/Bezymannyj-1-(1).jpg">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23007aff'/><text x='50' y='68' font-family='sans-serif' font-size='52' font-weight='800' fill='white' text-anchor='middle'>SO</text></svg>">
 <title>SO Analytics</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
@@ -254,7 +254,12 @@ body.dark .tbl-h{background:rgba(255,255,255,.04)}
 
 <!-- SPLASH -->
 <div id="splashScreen" style="position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:15%;background:#f2f2f7;transition:opacity .35s ease">
-  <img id="splashLogo" src="https://i.postimg.cc/Dy1qT843/Bezymannyj-1-(1).jpg" style="width:120px;height:120px;object-fit:contain;border-radius:28px;opacity:0;transform:scale(0.85);transition:opacity .4s ease,transform .4s cubic-bezier(.16,1,.3,1)">
+  <div id="splashLogo" style="width:120px;height:120px;border-radius:28px;overflow:hidden;box-shadow:0 8px 32px rgba(0,122,255,.3);opacity:0;transform:scale(0.85);transition:opacity .4s ease,transform .4s cubic-bezier(.16,1,.3,1)">
+    <svg width="120" height="120" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#007aff"/>
+      <text x="50" y="68" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="52" font-weight="800" fill="white" text-anchor="middle">SO</text>
+    </svg>
+  </div>
   <div id="splashFooter" style="position:absolute;bottom:env(safe-area-inset-bottom,28px);left:0;right:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .4s ease .2s">
     <span style="font-size:13px;font-weight:500;color:#6d6d72;letter-spacing:1.5px;text-transform:uppercase">Analytics</span>
   </div>
@@ -275,7 +280,7 @@ body.dark .tbl-h{background:rgba(255,255,255,.04)}
 
 <!-- ▼ КОНФИГ -->
 <script>
-const SHEET_ID = '14rDPEX5IA0PWt-PH2DJeU3RTD_yFflJ6ZZ5eQZbPu1c';
+const SHEET_ID = '1B485QDsOHIkGRDz5_ljOO2k98g64Y32ANtPo7U6KNSU';
 const API_KEY  = 'AIzaSyAjGIIL0E1yvT3vaAhofI0NElS5q-oi86g';
 const SKIP = ['loocker_data','Сводка','сводка','Шаблон','Template','app_settings','Лист1'];
 
@@ -290,7 +295,13 @@ const SKIP = ['loocker_data','Сводка','сводка','Шаблон','Templ
 
 <!-- HEADER -->
 <div class="header" id="mainHeader">
-  <div class="logo" id="appLogo">SO</div>
+  <div class="logo" id="appLogo">
+    <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
+      <rect width="100" height="100" rx="22" fill="#007aff"/>
+      <text x="50" y="68" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="52" font-weight="800" fill="white" text-anchor="middle">SO</text>
+    </svg>
+    <span>Analytics</span>
+  </div>
   <div style="display:flex;align-items:center;gap:8px">
     <button id="darkBtn" onclick="toggleDark()" style="width:34px;height:34px;border-radius:50%;background:var(--s2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px">🌙</button>
     <button class="month-pill" onclick="openMonthModal()">
@@ -510,12 +521,12 @@ async function renderDay(rows){
   let kr=null;
   const kassaStart=findSection(rows,'КАССА');
   if(kassaStart>=0){
-    for(let r=kassaStart+1;r<Math.min(kassaStart+80,rows.length);r++){
+    for(let r=kassaStart+2;r<Math.min(kassaStart+80,rows.length);r++){
       const row=rows[r]||[];
-      // Date is in col 0 (A), Вход col 1, Доход col 2, Расход col 3, Касса col 4
-      const cellDate=normDate(row[0]);
+      // КАССА: cDate=col12, cIn=col13, cIncome=col15, cExpense=col16, cBalance=col17 (0-indexed)
+      const cellDate=normDate(row[12]);
       if(cellDate===day.date){
-        kr={open:fv(row[1]||0),income:fv(row[2]||0),expense:fv(row[3]||0),balance:fv(row[4]||0)};
+        kr={open:fv(row[13]||0),income:fv(row[15]||0),expense:fv(row[16]||0),balance:fv(row[17]||0)};
         break;
       }
     }
@@ -527,8 +538,9 @@ async function renderDay(rows){
   if(inkStart>=0){
     for(let r=inkStart+2;r<Math.min(inkStart+80,rows.length);r++){
       const row=rows[r]||[];
-      const cellDate=normDate(row[0]);
-      if(cellDate===day.date){inkVal={sum:fv(row[1]||0),reason:row[2]||'',total:fv(row[3]||0)};break;}
+      // ИНКАСС: cDate=col4, cIncome=col5, cExpense=col7(причина), cTotal=col8 (0-indexed)
+      const cellDate=normDate(row[4]);
+      if(cellDate===day.date){inkVal={sum:fv(row[5]||0),reason:row[7]||'',total:fv(row[8]||0)};break;}
     }
   }
 
@@ -665,28 +677,41 @@ async function loadInkassa(){
     const start=findSection(rows,'ИНКАССАЦИ');
     if(start<0){g('panel-inkassa').innerHTML='<div class="empty">Блок инкассаций не найден</div>';return;}
 
-    // Get salary data to calculate accumulated FOT
+    // Get salary data to calculate daily FOT (5/7 schedule)
     const salStart=findSection(rows,'СМЕНЫ И ЗАРПЛАТЫ');
     let totalFOT=0;
+    const employeeFOT=[];
     if(salStart>=0){
       for(let r=salStart+2;r<rows.length;r++){
         const row=rows[r]||[];
-        const name=String(row[0]||'').trim();
+        const name=String(row[20]||'').trim();
         if(!name)break;
         if(name.toLowerCase().includes('итого'))break;
-        const zp=parseFloat(String(row[1]||0).replace(',','.'))||0;
+        const zp=parseFloat(String(row[21]||0).replace(',','.'))||0;
+        const propuski=parseInt(row[23])||0;
         totalFOT+=zp;
+        employeeFOT.push({name,zp,propuski});
       }
+    }
+    // Calculate FOT accumulated by last inkassa date (5/7 daily rate)
+    const lastData=data[data.length-1];
+    function fotByDate(dateStr){
+      if(!dateStr||!totalFOT)return 0;
+      const [dd]=dateStr.split('.');
+      const dayNum=parseInt(dd);
+      // 5/7 days per week = daily rate multiplier
+      return totalFOT*(dayNum*(5/7))/30;
     }
 
     const data=[];
     for(let r=start+2;r<rows.length;r++){
       const row=rows[r]||[];
-      const ds=normDate(row[0]);
+      // ИНКАСС: cDate=col4, cIncome=col5, cExpense=col7(причина/расход), cTotal=col8 (0-indexed)
+      const ds=normDate(row[4]);
       if(!ds)break;
-      const sum=parseFloat(String(row[1]||0).replace(',','.'))||0;
-      const reason=String(row[2]||'');
-      const cumul=parseFloat(String(row[3]||0).replace(',','.'))||0;
+      const sum=parseFloat(String(row[5]||0).replace(',','.'))||0;
+      const reason=String(row[7]||'');
+      const cumul=parseFloat(String(row[8]||0).replace(',','.'))||0;
       data.push({date:ds,sum,reason,cumul});
     }
 
@@ -704,24 +729,27 @@ async function loadInkassa(){
       <span style="color:var(--orange);font-weight:700">€${fv(r.cumul)}</span>
     </div>`).join('');
 
-    // FOT comparison card
+    // FOT comparison card - FOT accumulated to date of last inkassa
+    const fotToDate=fotByDate(last.date);
     const fotCard=totalFOT>0?`
       <div class="sg c2" style="margin-top:0">
         <div class="stat"><div class="stat-l">Инкасс. накопл.</div><div class="stat-v or">€${fv(last.cumul)}</div></div>
-        <div class="stat"><div class="stat-l">ФОТ за месяц</div><div class="stat-v bl">€${fv(totalFOT)}</div></div>
+        <div class="stat"><div class="stat-l">ФОТ к ${last.date.slice(0,5)}</div><div class="stat-v bl">≈€${fv(fotToDate)}</div></div>
       </div>
       <div class="card" style="margin-bottom:12px">
         <div class="lrow">
           <div class="lname">Покрытие ФОТ</div>
-          <div class="lval ${last.cumul>=totalFOT?'gr':'rd'}">${Math.round(last.cumul/totalFOT*100)}%</div>
+          <div class="lval ${last.cumul>=fotToDate?'gr':'rd'}">${fotToDate>0?Math.round(last.cumul/fotToDate*100):0}%</div>
         </div>
         <div class="lrow">
           <div class="lname">Остаток к инкасс.</div>
-          <div class="lval ${totalFOT-last.cumul<=0?'gr':'or'}">€${fv(Math.max(0,totalFOT-last.cumul))}</div>
+          <div class="lval ${fotToDate-last.cumul<=0?'gr':'or'}">€${fv(Math.max(0,fotToDate-last.cumul))}</div>
         </div>
-      </div>`:'';
-
-    g('panel-inkassa').innerHTML=`
+        <div class="lrow">
+          <div class="lname">ФОТ за весь месяц</div>
+          <div class="lval bl">€${fv(totalFOT)}</div>
+        </div>
+      </div>`:'';    g('panel-inkassa').innerHTML=`
       <div class="sg c2">
         <div class="stat"><div class="stat-l">Баланс накопл.</div><div class="stat-v or">€${fv(last.cumul)}</div></div>
         <div class="stat"><div class="stat-l">Операций</div><div class="stat-v bl">${activeRows.length}</div></div>
@@ -751,12 +779,13 @@ async function loadKassa(){
     const data=[];
     for(let r=start+2;r<rows.length;r++){
       const row=rows[r]||[];
-      const ds=normDate(row[0]);
+      // КАССА: cDate=col12, cIn=col13, cIncome=col15, cExpense=col16, cBalance=col17 (0-indexed)
+      const ds=normDate(row[12]);
       if(!ds)break;
-      const open=parseFloat(String(row[1]||0).replace(',','.'))||0;
-      const income=parseFloat(String(row[2]||0).replace(',','.'))||0;
-      const expense=parseFloat(String(row[3]||0).replace(',','.'))||0;
-      const balance=parseFloat(String(row[4]||0).replace(',','.'))||0;
+      const open=parseFloat(String(row[13]||0).replace(',','.'))||0;
+      const income=parseFloat(String(row[15]||0).replace(',','.'))||0;
+      const expense=parseFloat(String(row[16]||0).replace(',','.'))||0;
+      const balance=parseFloat(String(row[17]||0).replace(',','.'))||0;
       if(income>0||expense>0||balance>0)data.push({date:ds,open,income,expense,balance});
     }
 
@@ -804,19 +833,20 @@ async function loadSalary(){
     let totalZP=0,totalPay=0;
     for(let r=start+2;r<rows.length;r++){
       const row=rows[r]||[];
-      const name=String(row[0]||'').trim();
+      // SALARY: cName=col20, cShifts=col21, + additional cols 0-indexed
+      const name=String(row[20]||'').trim();
       if(!name)break;
       if(name.toLowerCase().includes('итого')){
-        totalZP=parseFloat(String(row[1]||0).replace(',','.'))||0;
-        totalPay=parseFloat(String(row[6]||0).replace(',','.'))||0;
+        totalZP=parseFloat(String(row[21]||0).replace(',','.'))||0;
+        totalPay=parseFloat(String(row[26]||0).replace(',','.'))||0;
         break;
       }
-      const zp=parseFloat(String(row[1]||0).replace(',','.'))||0;
-      const vychet=parseFloat(String(row[2]||0).replace(',','.'))||0;
-      const propuski=parseInt(row[3])||0;
-      const itogVychet=parseFloat(String(row[4]||0).replace(',','.'))||0;
-      const naKartu=parseFloat(String(row[5]||0).replace(',','.'))||0;
-      const kVydache=parseFloat(String(row[6]||0).replace(',','.'))||0;
+      const zp=parseFloat(String(row[21]||0).replace(',','.'))||0;
+      const vychet=parseFloat(String(row[22]||0).replace(',','.'))||0;
+      const propuski=parseInt(row[23])||0;
+      const itogVychet=parseFloat(String(row[24]||0).replace(',','.'))||0;
+      const naKartu=parseFloat(String(row[25]||0).replace(',','.'))||0;
+      const kVydache=parseFloat(String(row[26]||0).replace(',','.'))||0;
       data.push({name,zp,vychet,propuski,itogVychet,naKartu,kVydache});
     }
 
@@ -867,7 +897,52 @@ function normDate(d){
   return s;
 }
 
-// ── DARK MODE ────────────────────────────────────────────────────
+// ── SAFE AREA FIX FOR PWA (iPhone Face ID) ───────────────────────
+(function fixSafeArea(){
+  function apply(){
+    // Read actual safe-area-inset-bottom via a test element
+    const tester=document.createElement('div');
+    tester.style.cssText='position:fixed;bottom:0;left:0;right:0;height:env(safe-area-inset-bottom,0px);pointer-events:none;z-index:-1';
+    document.body.appendChild(tester);
+    const safeH=tester.offsetHeight||0;
+    document.body.removeChild(tester);
+    // If env() returned 0 but we're on a notched device, use fallback
+    const fallback=(window.screen.height>=812)?34:0;
+    const sab=safeH>0?safeH:fallback;
+    if(sab>0){
+      const bnv=document.querySelector('.bottom-nav');
+      const dayB=document.getElementById('dayBar');
+      const scr=document.getElementById('scrollArea');
+      const BNH=82,BBH=64;
+      if(bnv)bnv.style.height=(BNH+sab)+'px';
+      if(bnv)bnv.style.paddingBottom=sab+'px';
+      if(dayB)dayB.style.bottom=(BNH+sab)+'px';
+      if(scr){
+        scr.style.bottom=(BNH+sab)+'px';
+        scr.classList.contains('with-daybar')&&(scr.style.bottom=(BNH+BBH+sab)+'px');
+      }
+      // Store for dynamic use
+      window._safeBottom=sab;
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);
+  else apply();
+  window.addEventListener('resize',apply);
+})();
+
+// Override scroll bottom when tab switches to account for day-bar
+const _origSwitchTab=switchTab;
+switchTab=function(t){
+  _origSwitchTab(t);
+  const sab=window._safeBottom||0;
+  const BNH=82,BBH=64;
+  const scr=document.getElementById('scrollArea');
+  if(scr){
+    const isDay=t==='day';
+    scr.style.bottom=isDay?(BNH+BBH+sab)+'px':(BNH+sab)+'px';
+  }
+};
+
 function applyDarkHeader(isDark){
   const h=g('mainHeader');if(!h)return;
   h.style.cssText='';
